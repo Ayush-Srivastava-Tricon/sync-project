@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from 'src/app/service/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -7,26 +8,18 @@ import { Router } from '@angular/router';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
-  constructor (private _router:Router){}
-
+  
   loginObj:any = {};
-  loginArr:any = [];
-  getFormSignUpValues(){
-
-console.log(this.loginObj.email);
-
-    let savedData = JSON.parse(<any>localStorage.getItem("signUp"))
-
-    savedData.forEach((element:any)=>{
-      
-      if(this.loginObj.email == element.email && this.loginObj.password == element.password){
-        this._router.navigate(["/login"])
-      }else{
-        console.log("user not found");
-        
+  
+  constructor (private _service:AuthService,private router:Router){}
+  
+  login(){
+    this._service.login(this.loginObj,(res:any)=>{
+      if(res){
+        console.log(res);
+        this.router.navigate(['dashboard'])
       }
     })
-    
   }
 
 }

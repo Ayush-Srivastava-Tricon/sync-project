@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { AuthService } from 'src/app/service/auth.service';
 
 @Component({
   selector: 'app-sign-up',
@@ -7,12 +8,19 @@ import { Component } from '@angular/core';
 })
 export class SignUpComponent {
   signUpObj:any = {};
-  signUpArr:any = []
-  getFormSignUpValues(){
-this.signUpArr.push(this.signUpObj)
 
-    localStorage.setItem("signUp",JSON.stringify(this.signUpArr))
-    
+
+  constructor(private _service:AuthService){
+
   }
+
+  signUp(){
+      this._service.signUp(this.signUpObj,(res:any)=>{
+        if(res){
+          console.log(res);
+        }
+      })
+  }
+ 
 
 }
