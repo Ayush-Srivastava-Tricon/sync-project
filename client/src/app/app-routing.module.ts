@@ -14,6 +14,14 @@ const routes: Routes = [
     path: "dashboard",
     loadChildren: () => import("./component/dashboard/dashboard.module").then(m => m.DashboardModule)
   },
+  {
+    path: "calendar",
+    loadChildren: () => import("./component/calendar/calendar.module").then(m => m.CalendarModule)
+  },
+  {
+    path: "manage_ota",
+    loadChildren: () => import("./component/manage-ota/manage-ota.module").then(m => m.ManageOtaModule)
+  },
 ];
 
 @NgModule({

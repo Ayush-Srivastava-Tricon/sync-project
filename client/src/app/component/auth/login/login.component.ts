@@ -17,7 +17,8 @@ export class LoginComponent {
     this._service.login(this.loginObj,(res:any)=>{
       if(res){
         console.log(res);
-        this.router.navigate(['dashboard'])
+        this.router.navigate(['calendar']);
+        localStorage.setItem("isLoggedIn",JSON.stringify(true));
       }
     })
   }

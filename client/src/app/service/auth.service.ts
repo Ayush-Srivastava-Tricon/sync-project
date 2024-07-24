@@ -12,12 +12,14 @@ export class AuthService extends BaseService {
   }
 
   login(param:any,callback:any){
-    this.postData(param,this.httpUrls['login'],callback);
+    this.postData(param,this.httpUrls['LOGIN'],callback);
   }
 
-
-
   signUp(param:any,callback:any){
-    this.postData(param,this.httpUrls['signup'],callback);
+    this.postData(param,this.httpUrls['SIGNUP'],callback);
+  }
+
+  fetchUserList(callback:any){
+    this.getData({},this.httpUrls['USER_LIST'],callback);
   }
 }

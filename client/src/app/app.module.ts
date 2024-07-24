@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import {HttpClientModule} from "@angular/common/http";
 import { AuthService } from './service/auth.service';
 import { BaseService } from './service/base.service';
+import { HeaderModule } from './component/header/header.module';
 
 @NgModule({
   declarations: [
@@ -14,7 +15,8 @@ import { BaseService } from './service/base.service';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    HeaderModule
   ],
   providers: [AuthService,BaseService],
   bootstrap: [AppComponent]

@@ -7,15 +7,18 @@ import { Injectable } from '@angular/core';
 export class BaseService {
 
   httpUrls:any={
-    'login':'http://localhost:3000/api/login',
-    'signup':'http://localhost:3000/api/signup',
+    'LOGIN':'http://localhost:3000/api/login',
+    'SIGNUP':'http://localhost:3000/api/signup',
+    'USER_LIST':'http://localhost:3000/api/getUsers',
+    'ADD_OTA':'http://localhost:3000/api/addOta',
+    'GET_OTA_LIST':'http://localhost:3000/api/getOta',
   }
 
   constructor(public http:HttpClient) { }
 
 
-  getData(){
-
+  getData(d:any,url:any,callback:any){
+    return this.http.get(url).subscribe((data:any)=>callback(<any>data));
   }
 
   postData(d:any,url:any,callback:any){

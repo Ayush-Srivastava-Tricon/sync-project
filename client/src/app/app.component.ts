@@ -7,4 +7,9 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'client';
+  isLoggedIn:boolean=false;
+
+  ngOnInit(){
+   this.isLoggedIn =  JSON.parse(<any>localStorage.getItem("isLoggedIn"));
+  }
 }
