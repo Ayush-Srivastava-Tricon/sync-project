@@ -1,0 +1,198 @@
+<div class="container-fluid" *ngIf="!showModal.ota">
+    <div class="row justify-content-center align-items-center">
+        <div class="col-sm-12">
+            <div class="table-wrapper shadow">
+                <div class="table-title">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <span class="title">OTA List</span>
+                        </div>
+                        <div class="col-sm-6">
+                            <a href="javascript:void(0);" (click)="openModal()" class="btn btn-success"
+                                data-toggle="modal"><span>Add OTA Detail</span></a>
+                        </div>
+                    </div>
+                </div>
+                <table class="table table-shadow table-lg table-striped table-hover">
+                    <thead class="thead-dark">
+                        <tr class="table-row-rooms">
+                            <th>ID</th>
+                            <th>OTA Name</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngIf="loader">
+                            <td class="tg-cly1">
+                            </td>
+                            <td class="tg-cly1">
+                            </td>
+                            <td class="tg-cly1">
+                            </td>
+                            <td class="tg-cly1">
+                            </td>
+                        </tr>
+                        <ng-container *ngIf="otaList.length>0 && !loader">
+
+                            <tr *ngFor="let item of otaList;let idx = index;" class="text-center align-middle">
+                                <td>{{item.id}}</td>
+                                <td>
+                                    <img [src]="siteIconPathBaseUrl+item.site_icon" alt="Site Icon" height="50">
+                                  </td>
+                                <td>{{item.site_name}}</td>
+                                <td>{{item.status == 1 ? 'Active' :'InActive'}}</td>
+                                <td>
+                                    <div class="dropdown">
+                                        <i class="btn btn-light btn-sm bi bi-three-dots-vertical"
+                                            (click)="showDropDown(idx)"></i>
+                                        <div class="dropdown-menu d-block" (mouseleave)="showActionDropDown[idx]=false;"
+                                            *ngIf="showActionDropDown[idx]">
+                                            <!-- <a class="dropdown-item">Change Status</a> -->
+                                            <a class="dropdown-item" (click)="editOwnerOpenModal(item)">Edit OTA</a>
+                                            <!-- <a class="dropdown-item" (click)="deleteotaModal(item.owner_id,idx)">Delete</a> -->
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-container>
+
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<ng-container *ngIf="showModal.ota">
+    <div class="my-3 ms-2 d-flex justify-content-between bg-light p-2">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb m-0">
+                <li class="breadcrumb-item"><i class="bi bi-arrow-90deg-left mx-2"></i>
+                    <a href="javascript:void(0);" class="text-decoration-none" (click)="backToManageOta()">Back to
+                        Manage OTA</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">{{isEditModal? 'Edit':'Add'}} OTA</li>
+            </ol>
+        </nav>
+    </div>
+    <div class="container shadow p-4 px-5 rounded bg-white w-50" [formGroup]="otaModal">
+        <div class="row mb-5">
+            <div class="col-sm-12">
+                <div class="d-flex justify-content-around">
+                    <div class="image-box" title="choose Site icon" (click)="file.click()">
+                        <input type="file" hidden="true" (change)="chooseSiteIcon($event)" #file placeholder="Image"
+                            accept="image/*">
+                            <ng-container *ngIf="siteIcon">
+                                <img [src]="siteIcon" width="130" height="120" alt=""> 
+                            </ng-container>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="row px-5 mb-2 mt-5">
+            <div class="col-sm-12 text-center">
+                <div class="form-group row mb-2">
+                    <label for="propertyName" class="col-sm-3 col-form-label">Name <span
+                            class="text-danger">*</span></label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" formControlName="site_name"
+                            [class.is-invalid]="otaModal.controls.site_name.dirty && otaModal.controls.site_name.errors?.['required']">
+                        <small
+                            *ngIf="otaModal.controls.site_name.dirty && otaModal.controls.site_name.errors?.['required']"
+                            class="text-danger d-block text-start">Required</small>
+                    </div>
+                </div>
+                <div class="form-group row mb-2">
+                    <label for="propertyName" class="col-sm-3 col-form-label">Site End Point</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" formControlName="site_endpoint"
+                            [class.is-invalid]="(otaModal.controls.site_endpoint.dirty && otaModal.controls.site_endpoint.errors?.['required']) || (otaModal.controls.site_endpoint.dirty && otaModal.controls.site_endpoint.errors?.['pattern'])">
+                        <small
+                            *ngIf="otaModal.controls.site_endpoint.dirty && otaModal.controls.site_endpoint.errors?.['required']"
+                            class="text-danger d-block text-start">Required</small>
+                        <small
+                            *ngIf="otaModal.controls.site_endpoint.dirty && otaModal.controls.site_endpoint.errors?.['pattern']"
+                            class="text-danger d-block text-start">Only Number</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row px-5">
+            <div class="col-sm-12 text-center">
+                <div class="form-group row mb-2">
+                    <label for="propertyName" class="col-sm-3 col-form-label">Site User</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" formControlName="site_user"
+                            [class.is-invalid]="(otaModal.controls.site_user.dirty && otaModal.controls.site_user.errors?.['required']) || (otaModal.controls.site_user.dirty && otaModal.controls.site_user.errors?.['pattern'])">
+                        <small
+                            *ngIf="otaModal.controls.site_user.dirty && otaModal.controls.site_user.errors?.['required']"
+                            class="text-danger d-block text-start">Required</small>
+                        <small
+                            *ngIf="otaModal.controls.site_user.dirty && otaModal.controls.site_user.errors?.['pattern']"
+                            class="text-danger d-block text-start">Only Number</small>
+                    </div>
+                </div>
+
+                <div class="form-group row mb-2">
+                    <label for="propertyName" class="col-sm-3 col-form-label">Site Pass</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" formControlName="site_pass"
+                            [class.is-invalid]="(otaModal.controls.site_pass.dirty && otaModal.controls.site_pass.errors?.['required']) || (otaModal.controls.site_pass.dirty && otaModal.controls.site_pass.errors?.['pattern'])">
+                        <small
+                            *ngIf="otaModal.controls.site_pass.dirty && otaModal.controls.site_pass.errors?.['required']"
+                            class="text-danger d-block text-start">Required</small>
+                        <small
+                            *ngIf="otaModal.controls.site_pass.dirty && otaModal.controls.site_pass.errors?.['pattern']"
+                            class="text-danger d-block text-start">Only Number</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row px-5">
+            <div class="col-sm-12 text-center">
+                <div class="form-group row mb-2">
+                    <label for="propertyName" class="col-sm-3 col-form-label">Site Api Key</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" formControlName="site_apiKey"
+                            [class.is-invalid]="(otaModal.controls.site_apiKey.dirty && otaModal.controls.site_apiKey.errors?.['required']) || (otaModal.controls.site_apiKey.dirty && otaModal.controls.site_apiKey.errors?.['pattern'])">
+                        <small
+                            *ngIf="otaModal.controls.site_apiKey.dirty && otaModal.controls.site_apiKey.errors?.['required']"
+                            class="text-danger d-block text-start">Required</small>
+                        <small
+                            *ngIf="otaModal.controls.site_apiKey.dirty && otaModal.controls.site_apiKey.errors?.['pattern']"
+                            class="text-danger d-block text-start">Only Number</small>
+                    </div>
+                </div>
+
+                <div class="form-group row mb-2">
+                    <label for="propertyName" class="col-sm-3 col-form-label">Site Other Info</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" formControlName="site_otherInfo"
+                            [class.is-invalid]="(otaModal.controls.site_otherInfo.dirty && otaModal.controls.site_otherInfo.errors?.['required']) || (otaModal.controls.site_otherInfo.dirty && otaModal.controls.site_otherInfo.errors?.['pattern'])">
+                        <small
+                            *ngIf="otaModal.controls.site_otherInfo.dirty && otaModal.controls.site_otherInfo.errors?.['required']"
+                            class="text-danger d-block text-start">Required</small>
+                        <small
+                            *ngIf="otaModal.controls.site_otherInfo.dirty && otaModal.controls.site_otherInfo.errors?.['pattern']"
+                            class="text-danger d-block text-start">Only Number</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-3 px-5 mb-2">
+            <div class="col-sm-12">
+                <button type="submit" class="btn btn-success" [disabled]="loader"
+                    (click)="isEditModal ? editOtaDetails() : addNewOtaDetails()">{{isEditModal?'Update':'Create OTA'}}</button>
+                    <div class="spinner-loader text-success" *ngIf="loader"></div>
+            </div>
+        </div>
+    </div>
+
+</ng-container>
