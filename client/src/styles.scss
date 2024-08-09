@@ -1,6 +1,37 @@
+*{
+  font-family: "Raleway", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.bg-success{
+  background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+} 
+
+.btn-success{
+  background-image: linear-gradient(120deg, #f093fb 0%, #f5576c 100%);
+}
+
+.table-row-rooms>th{
+  background-image: linear-gradient(360deg, #fdfbfb 0%, #ebedee 100%);
+}
+
+.import-btn:hover{
+  box-shadow: 1px 1px 10px #f5576c;
+}
+
+
 label{
     font-weight: 500 !important;
     text-align: start;
+}
+
+.text-primary{
+  color: #3f51b5 !important;
+}
+.bg-primary,.btn-primary{
+  background-color: #3f51b5 !important;
 }
 
 // <====ALERT================>
@@ -102,33 +133,64 @@ h1{color:#e35154 !important; font-size:18px; margin-left:20px; margin-bottom:20p
 }
 
 .alert-success {
-  color: #fff;
-  border-color: #539753;
-  background-color: #4caf50;
+  color: #fff !important;
+  border-color: #3f51b5 !important;
+  background-color: #3f51b5 !important;
 }
 
 .alert-error {
-  color: #fff;
-  border-color: #dc4a4d;
-  background-color: #f25c5d;
+  color: #fff !important;
+  border-color: #dc4a4d  !important;
+  background-color: #f25c5d !important;
 }
 
 .alert-trash {
-  color: #fff;
-  border-color: #dc4a4d;
-  background-color: #f25c5d;
+  color: #fff !important;
+  border-color: #dc4a4d !important;
+  background-color: #f25c5d !important;
 }
 
 .alert-info {
-  color: #fff;
-  border-color: #076d91;
-  background-color: #3397db;
+  color: #fff !important;
+  border-color: #076d91 !important;
+  background-color: #3397db !important;
 }
 
 .alert-warning {
-  color: #fff;
-  border-color: #dd6137;
-  background-color: #f7931d;
+  color: #fff !important;
+  border-color: #dd6137 !important;
+  background-color: #f7931d !important;
 }
 
 // <END ALERTT=======>
+
+//<==========SKELETON CSS==========>
+
+$base-color: #F4F4F4;
+$shine-color: rgba(229,229,229,0.8);
+$animation-duration: 1.5s;
+
+@mixin background-gradient {
+  background-image: linear-gradient(90deg, $base-color 0px, $shine-color 40px, $base-color 80px);
+  background-size: 600px;
+}
+  
+
+  .tg-cly1{
+      width: 120px;
+      height: 50px;
+      margin-top: 7px;
+      
+      @include background-gradient;
+      animation: shine-lines $animation-duration infinite ease-out;
+  }
+
+
+ 
+@keyframes shine-lines{
+    0% { background-position: -100px;}
+    40%, 100% {background-position: 140px;}
+}
+
+
+//<===========END SKELETON============>

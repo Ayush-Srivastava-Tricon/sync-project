@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { AdminService } from 'src/app/admin.service';
 
 @Component({
   selector: 'app-header',
@@ -7,4 +8,7 @@ import { Component } from '@angular/core';
 })
 export class HeaderComponent {
 
+  constructor(private _service:AdminService){
+    
+  }
 }

@@ -1,6 +1,5 @@
-.calendar-header {
-    background-color: aliceblue;
-    pad: 7px;
+.header {
+  background-image: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
   }
   
   .controls button {
@@ -14,6 +13,8 @@
   
   .month {
     font-size: 24px;
+    font-weight: 500;
+    color: white;
   }
   
   .weekdays,
@@ -96,6 +97,10 @@
     width: 50px !important;
     height: 45px !important;
     vertical-align: middle;
+    
+    &.available{
+      background-color: #4caf50;
+    }
   
   }
   

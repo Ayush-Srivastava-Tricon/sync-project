@@ -1,14 +1,28 @@
 <div class="container-fluid mt-3">
-
-    <div class="row mb-4 justify-content-between">
+  <div class="my-3 ms-2 d-flex justify-content-between bg-light p-2">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb m-0">
+            <li class="breadcrumb-item"><i class="bi bi-arrow-90deg-left mx-2"></i>
+                <a href="javascript:void(0);" class="text-decoration-none" (click)="backToViewRoom()">Back to
+                    View Room</a>
+            </li>
+            <li class="breadcrumb-item" aria-current="page">Calendar View</li>
+        </ol>
+    </nav>
+</div>
+    <div class="row mb-5 header py-2 justify-content-between">
       <div class="col-sm-3">
         <div class="d-flex">
-          <div class="d-block border-top text-light rounded shadow bg-primary p-2">Date Range</div>
+          <div class="d-block border-top text-light rounded shadow btn-success import-btn p-2">Date Range</div>
           <input type="date" id="date" class="form-control-sm mx-4" [value]="this.formatDate(todayDate)"
             (change)="selectedDate($event)">
         </div>
       </div>
-      <div class="col-sm-6"></div>
+      <div class="col-sm-6 text-end">
+        <button class="btn btn-success border-0 import-btn" (click)="importPriceAndAvailability('GET_CALENDAR_DATA')">
+          Import Price And Availability
+        </button>
+      </div>
       <div class="col-sm-3 text-end" *ngIf="isAdmin||isOwner">
         <select class="form-select-sm me-3" (change)="changeCalendarByProperty($event)">
           <ng-container *ngFor="let data of allPropertyList">
@@ -21,8 +35,8 @@
     <div class="container-fluid text-center" *ngIf="!loader && mainData.length == 0">
       <div class="display-1">No Rooms Found</div>
     </div>
-    <div class="container-fluid" *ngIf="!loader">
-      <div class="row my-2" style="background-color: lightblue; color: white;">
+    <div class="container-fluid">
+      <div class="row my-2" style="background-image: linear-gradient(to top, #fbc2eb 0%, #a6c1ee 100%);">
         <ng-container *ngFor="let data of mainData; let calendarIdx =index; trackBy: identify">
           <div class="row  mb-1 d-flex justify-content-between align-items-center pt-2">
             <div class="col-sm-1 "></div>
@@ -33,17 +47,25 @@
             <div class="col-sm-3">
               <div class="month">{{ currentMonth }}</div>
             </div>
-            <div class="col-sm-3 text-end"> <small class="lead me-1">{{nextDisplayMonth}}</small> <span
-                class="bi bi-arrow-right-square text-danger" style="font-size: 30px;cursor: pointer;"
-                (click)="nextMonth()"></span></div>
-          </div>
+            <div class="col-sm-3 d-flex justify-content-end ">
+              <small class=" month lead me-1">{{nextDisplayMonth}}</small>
+              <button type="button" class="btn btn-sm ms-2 btn-danger" (click)="nextMonth()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                  class="bi bi-arrow-right-square-fill" viewBox="0 0 16 16">
+                  <path
+                    d="M0 14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2zm4.5-6.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5a.5.5 0 0 1 0-1">
+                  </path>
+                </svg>
+              </button>
+            </div>
+            </div>
           <div class="table-responsive">
   
             <table class="table table-bordered table-sm shadow p-3 mb-3" loading="lazy">
               <thead class="thead-dark">
                 <tr id="weekId">
-                  <th class="textRandom text-ellipsis" [title]="data.room_name">
-                    {{data.room_name}}
+                  <th class="textRandom text-ellipsis fw-bold fs-6" [title]="data.room_name">
+                    {{data.room_name ||  currentOtaDetails.room_name}}
                   </th>
                   <ng-container *ngFor="let head of weekdaysWithDates;let thIdx=index;">
                     <th class="weekday-date" id="head{{thIdx}}{{calendarIdx}}" style="cursor: pointer;"
@@ -71,14 +93,14 @@
   
                       <ng-container *ngFor="let dayData of data.datesData;let dataIdx = index;">
                         <td *ngIf="id == 0" class="hover-td"
-                          [ngClass]="{'disabled':dayData.isDatePassed,'bg-success':dayData?.newData?.al ,'text-light':dayData?.newData?.al , 'bg-danger': !(dayData?.newData?.al) || dayData?.newData?.al == 0 ,'active':dragEl['head'+dataIdx+calendarIdx] }"
+                          [ngClass]="{'disabled':dayData.isDatePassed,'available':dayData?.newData?.available ,'text-light':dayData?.newData?.available , 'bg-danger': !(dayData?.newData?.available) || dayData?.newData?.available == 0 ,'active':dragEl['head'+dataIdx+calendarIdx] }"
                           (click)="handleClickEvent(dayData.formateDate,dayData?.newData,data.room_name,data.room_id,false);dragEl['head'+dataIdx+calendarIdx+id]=true;">
-                          {{dayData?.newData?.al }}
+                          {{dayData?.newData?.available || 0 }}
                         </td>
                         <td *ngIf="id == 1" class="hover-td"
                           [ngClass]="{'disabled':dayData.isDatePassed,'active':dragEl['head'+dataIdx+calendarIdx]}"
                           (click)="handleClickEvent(dayData.formateDate,dayData?.newData,data.room_name,data.room_id,false);dragEl['head'+dataIdx+calendarIdx]=true;">
-                          {{dayData?.newData?.mn }} - {{dayData?.newData?.mx }}
+                          {{dayData?.newData?.min }} - {{dayData?.newData?.max }}
                         </td>
                         <td *ngIf="id == 2" class="hover-td"
                           [ngClass]="{'disabled':dayData.isDatePassed,'active':dragEl['head'+dataIdx+calendarIdx]}"
@@ -91,7 +113,7 @@
                         <td *ngIf="id == 3" class="hover-td"
                           [ngClass]="{'disabled':dayData.isDatePassed,'bg-danger':dayData?.newData?.ss == 'true'|| dayData?.newData?.ss == '1','active':dragEl['head'+dataIdx+calendarIdx],'text-light':dayData?.newData?.ss == 'true'|| dayData?.newData?.ss == '1'}"
                           (click)="handleClickEvent(dayData.formateDate,dayData?.newData,data.room_name,data.room_id,false);dragEl['head'+dataIdx+calendarIdx]=true;">
-                          {{dayData?.newData?.pr}}
+                          {{dayData?.newData?.rate ? dayData?.newData?.rate + ".00" : '0'}}
                         </td>
                       </ng-container>
                     </ng-container>
@@ -124,10 +146,6 @@
           </div>
   
         </ng-container>
-      </div>
-    </div>
-    <div class="container-fluid text-center" *ngIf="loader">
-      <div class="spinner-border text-primary" role="status" style="width: 100px; height: 100px;">
       </div>
     </div>
   </div>

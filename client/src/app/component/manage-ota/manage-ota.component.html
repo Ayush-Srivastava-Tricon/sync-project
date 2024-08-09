@@ -1,59 +1,95 @@
 <div class="container-fluid" *ngIf="!showModal.ota">
     <div class="row justify-content-center align-items-center">
         <div class="col-sm-12">
-            <div class="table-wrapper shadow">
+            <div class="table-wrapper shadow table-responsive">
                 <div class="table-title">
                     <div class="row">
                         <div class="col-sm-6">
                             <span class="title">OTA List</span>
                         </div>
                         <div class="col-sm-6">
-                            <a href="javascript:void(0);" (click)="openModal()" class="btn btn-success"
+                            <a href="javascript:void(0);" (click)="openModal()" class="btn btn-success import-btn"
                                 data-toggle="modal"><span>Add OTA Detail</span></a>
                         </div>
                     </div>
                 </div>
-                <table class="table table-shadow table-lg table-striped table-hover">
+                <table class="table table-shadow table-lg table-hover">
                     <thead class="thead-dark">
                         <tr class="table-row-rooms">
                             <th>ID</th>
-                            <th>OTA Name</th>
-                            <th>Status</th>
+                            <th>Site Icon</th>
+                            <th>Site Name</th>
+                            <th>Site APIKey</th>
+                            <th>Site Endpoint</th>
+                            <th>Site User</th>
+                            <th>Site Pass</th>
+                            <th>Site OtherInfo</th>
+                            <th>View</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr *ngIf="loader">
-                            <td class="tg-cly1">
-                            </td>
-                            <td class="tg-cly1">
-                            </td>
-                            <td class="tg-cly1">
-                            </td>
-                            <td class="tg-cly1">
-                            </td>
+                            <td class="tg-cly1"></td>
+                            <td class="tg-cly1"></td>
+                            <td class="tg-cly1"></td>
+                            <td class="tg-cly1"></td>
+                            <td class="tg-cly1"></td>
+                            <td class="tg-cly1"></td>
+                        </tr>
+
+                        <tr *ngIf="otaList.length == 0">
+                            <td colspan="10" class="text-center">No data found, please Add OTA  </td>
                         </tr>
                         <ng-container *ngIf="otaList.length>0 && !loader">
+                            
 
-                            <tr *ngFor="let item of otaList;let idx = index;" class="text-center align-middle">
+                            <tr *ngFor="let item of otaList;let idx = index;" class="text-center align-middle" (mouseover)="showActionDropDown[idx]=true" (mouseleave)="showActionDropDown[idx]=false;">
                                 <td>{{item.id}}</td>
                                 <td>
-                                    <img [src]="siteIconPathBaseUrl+item.site_icon" alt="Site Icon" height="50">
+                                    <img [src]="siteIconPathBaseUrl+item.site_icon" loading="lazy" class="img-top rounded" alt="Site Icon" width="120" height="100">
                                   </td>
                                 <td>{{item.site_name}}</td>
-                                <td>{{item.status == 1 ? 'Active' :'InActive'}}</td>
-                                <td>
-                                    <div class="dropdown">
-                                        <i class="btn btn-light btn-sm bi bi-three-dots-vertical"
-                                            (click)="showDropDown(idx)"></i>
-                                        <div class="dropdown-menu d-block" (mouseleave)="showActionDropDown[idx]=false;"
-                                            *ngIf="showActionDropDown[idx]">
-                                            <!-- <a class="dropdown-item">Change Status</a> -->
-                                            <a class="dropdown-item" (click)="editOwnerOpenModal(item)">Edit OTA</a>
-                                            <!-- <a class="dropdown-item" (click)="deleteotaModal(item.owner_id,idx)">Delete</a> -->
-                                        </div>
+                                <td> <a href="javascript:void(0);" class="text-decoration-none fw-bold text-primary"  (click)="copyApiKey(item.site_apiKey)" >{{item.site_apiKey}} </a> </td>
+                                <td>{{item.site_endpoint}}</td>
+                                <td>{{item.site_user}}</td>
+                                <td>{{item.site_pass}}</td>
+                                <td>{{item.site_otherInfo}}</td>
+                                <td><a href="javascript:void(0);" class="text-primary" (click)="viewProperty(item)">View Property</a></td>
+                                <td class="action-btn">
+                                    <div class="d-flex" *ngIf="showActionDropDown[idx]">
+                                      <button type="button" class="btn btn-sm btn-light " [title]="item.isEditable ? 'Save' : 'Edit'" (click)="item.isEditable=!item.isEditable">
+                                        <ng-container *ngIf="!item.isEditable">
+                                          <svg xmlns="http://www.w3.org/2000/svg"  width="16" height="16" fill="currentColor"
+                                            class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                            <path
+                                              d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z">
+                                            </path>
+                                            <path fill-rule="evenodd"
+                                              d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z">
+                                            </path>
+                                          </svg>
+                                        </ng-container>
+                                        <ng-container *ngIf="item.isEditable">
+                                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                            class="bi bi-floppy-fill" viewBox="0 0 16 16">
+                                            <path
+                                              d="M0 1.5A1.5 1.5 0 0 1 1.5 0H3v5.5A1.5 1.5 0 0 0 4.5 7h7A1.5 1.5 0 0 0 13 5.5V0h.086a1.5 1.5 0 0 1 1.06.44l1.415 1.414A1.5 1.5 0 0 1 16 2.914V14.5a1.5 1.5 0 0 1-1.5 1.5H14v-5.5A1.5 1.5 0 0 0 12.5 9h-9A1.5 1.5 0 0 0 2 10.5V16h-.5A1.5 1.5 0 0 1 0 14.5z" />
+                                            <path
+                                              d="M3 16h10v-5.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5zm9-16H4v5.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5zM9 1h2v4H9z" />
+                                          </svg>
+                                        </ng-container>
+                                      </button>
+                                      <button type="button" class="btn btn-sm btn-outline-danger mx-2" (click)="toggleDeleteModal(idx)">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                          class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                                          <path
+                                            d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5">
+                                          </path>
+                                        </svg>
+                                      </button>
                                     </div>
-                                </td>
+                                  </td>
                             </tr>
                         </ng-container>
 
@@ -81,7 +117,7 @@
         <div class="row mb-5">
             <div class="col-sm-12">
                 <div class="d-flex justify-content-around">
-                    <div class="image-box" title="choose Site icon" (click)="file.click()">
+                    <div class="image-box" [ngClass]="{'remove-bg':siteIcon}" title="choose Site icon" (click)="file.click()">
                         <input type="file" hidden="true" (change)="chooseSiteIcon($event)" #file placeholder="Image"
                             accept="image/*">
                             <ng-container *ngIf="siteIcon">
@@ -173,7 +209,7 @@
                 <div class="form-group row mb-2">
                     <label for="propertyName" class="col-sm-3 col-form-label">Site Other Info</label>
                     <div class="col-sm-9">
-                        <input type="text" class="form-control" formControlName="site_otherInfo"
+                        <input type="number" class="form-control" formControlName="site_otherInfo" placeholder="Enter Theme ID"
                             [class.is-invalid]="(otaModal.controls.site_otherInfo.dirty && otaModal.controls.site_otherInfo.errors?.['required']) || (otaModal.controls.site_otherInfo.dirty && otaModal.controls.site_otherInfo.errors?.['pattern'])">
                         <small
                             *ngIf="otaModal.controls.site_otherInfo.dirty && otaModal.controls.site_otherInfo.errors?.['required']"

@@ -1,0 +1,1 @@
+cd server && code . && nodemon run

@@ -1,21 +1,22 @@
 <div class="container">
-    <div class="container">
-        <div class="form-box">
-          <div class="form">
-            <span class="title">Log In</span>
-            <span class="subtitle">Create a free account with your email.</span>
-            <div class="form-container">
-              <div class="form-container">
-                <input type="email" class="input" placeholder="Email" [(ngModel)]="loginObj.email">
-                <input type="password" class="input" placeholder="Password" [(ngModel)]="loginObj.password">
-              </div>
-              <button (click)="login()">Login</button>
-            </div>
+  <div class="container">
+    <div class="form-box">
+      <div class="form">
+        <span class="title">Log In</span>
+        <span class="subtitle">Create a free account with your email.</span>
+        <div class="d-flex flex-column">
+          <div class="form-container my-2">
+            <input type="email" autofocus class="input" placeholder="Email" [(ngModel)]="loginObj.email">
           </div>
-          <div class="form-section">
-            <p>Not have an account? <a routerLink="/signUp">Create an Account</a> </p>
+          <div class="form-container">
+            <input type="password" class="input" placeholder="Password" [(ngModel)]="loginObj.password">
           </div>
         </div>
+        <button (click)="login()" class="btn btn-primary">Login</button>
       </div>
-        
+      <div class="form-section">
+        <p>Not have an account? <a routerLink="/signUp">Create an Account</a> </p>
+      </div>
+    </div>
+  </div>
 </div>
