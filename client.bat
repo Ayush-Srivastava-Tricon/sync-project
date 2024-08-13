@@ -1,0 +1,1 @@
+cd client && code . && ng s --open

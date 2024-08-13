@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AdminService } from 'src/app/admin.service';
+import { AppConstants } from 'src/app/constants/app.constant';
 import { AlertService } from 'src/app/shared/alert.service';
 @Component({
   selector: 'app-calendar',
@@ -48,9 +50,10 @@ export class CalendarComponent {
   isAdmin: boolean = false;
   isOwner: boolean = false;
   isDeriveModalActive: boolean = false;
-  timeZoneAndStartDate:any={};
+  timeZoneAndStartDate: any = {};
+  currentOtaDetails: any;
 
-  constructor(private fb: FormBuilder, private alertService: AlertService) {
+  constructor(private fb: FormBuilder, private alert: AlertService, public constant: AppConstants, private _service: AdminService,private router:Router) {
     this.modalFieldForm = this.fb.group({
       "pr": ['', [Validators.pattern(/^\d*\.?\d*$/)]],
       "ss": ['',],
@@ -68,18 +71,30 @@ export class CalendarComponent {
   }
 
   ngOnInit(): void {
-    this.isAdmin = JSON.parse(<any>localStorage.getItem("isadmin"));
-    this.isOwner = JSON.parse(<any>localStorage.getItem("isowner"));
-    if (localStorage.getItem("selectedPropertyId")) {
-      this.loggedProperty.isLoginProperty = true;
-      this.loggedProperty.propertyId = localStorage.getItem("selectedPropertyId");
-      this.setDataToAllPropertyDropdown();
-      this.selectedDate({ target: { value: this.formatDate(this.todayDate) } })
-    } else {
-      this.loggedProperty.propertyId = localStorage.getItem("userId");
-      this.selectedDate({ target: { value: this.formatDate(this.todayDate) } })
-    }
+
+
+    let myloacalData: any = localStorage.getItem('current_ota_detail');
+    this.currentOtaDetails = JSON.parse(myloacalData);
+    this.fetchData();
   }
+
+  fetchData() {
+    let params: any = {
+
+      start_date: this.currentOtaDetails.from,
+      room_id: this.currentOtaDetails.room_id,
+      ota_id: this.currentOtaDetails.ota_id,
+      property_id: this.currentOtaDetails.property_id,
+      end_date: ''
+    }
+    this._service.fetchCalendarDataByStartEndDate(params, (res: any) => {
+      if (res.status == 200) {
+        this.selectedDate({ target: { value: this.formatDate(this.todayDate) } });
+        this.mainData = res.data;
+      }
+    })
+  }
+
 
   setDataToAllPropertyDropdown() {
     this.allPropertyList = JSON.parse(<any>localStorage.getItem("propertyList"));
@@ -107,6 +122,7 @@ export class CalendarComponent {
   //     }
   //   })
   // }
+
   getStartAndEndDate(nextButtonDate: any, isFromDateRange?: boolean) {
     let now: any;
     if (isFromDateRange) {
@@ -131,6 +147,7 @@ export class CalendarComponent {
   selectedDate(event: any) {
     this.selectDate = new Date(event.target.value);
     this.datesData = [];
+    this.renderCalendar(this.selectDate);
     // this.fetchCalendarData(this.selectDate, true);
   }
 
@@ -288,12 +305,29 @@ export class CalendarComponent {
   }
 
   makeCalendarData() {
-    this.createChildrenArray();
-
+    // this.mainData=[
+    //   {
+    //     room_id:1,
+    //     room_name:"Wonder Full",
+    //     data:[
+    //       {
+    //         date:"2024-07-30",
+    //         "accom_id": 38651,
+    //         "available": 4,
+    //         "rate": "238.5",
+    //         "breakdown": [
+    //             "238.5"
+    //         ],
+    //         "minlos": 1,
+    //         "maxlos": 5
+    //       }
+    //     ] 
+    //   }
+    // ]
     this.mainData.forEach((e: any) => {
       e.data.forEach((item: any) => {
         for (let i = 0; i < this.datesData.length; i++) {
-          if (new Date(item.date).setHours(0, 0, 0, 0) == new Date(this.datesData[i].formateDate).setHours(0, 0, 0, 0)) {
+          if (new Date(item.start_date).setHours(0, 0, 0, 0) == new Date(this.datesData[i].formateDate).setHours(0, 0, 0, 0)) {
             this.datesData[i]['newData'] = item;
             this.datesData[i].newData['resource'] = e.room_id;
             this.datesData[i].newData['start'] = item.date;
@@ -305,43 +339,9 @@ export class CalendarComponent {
     });
     this.loader = false;
 
-  }
+    console.log(this.mainData);
 
-  createChildrenArray() {
-    const rooms: any = {};
-    this.mainData.forEach((obj: any) => {
-      if (obj.parent_room_id !== null && rooms[obj.parent_room_id]) {
-        rooms[obj.parent_room_id].children.push(obj);
-      } else {
-        const room = { ...obj, children: [] };
-        rooms[obj.room_id] = room;
-      }
-    });
 
-    this.mainData = JSON.parse(JSON.stringify(Object.values(rooms)));
-
-    this.mainData.forEach((e: any) => {
-      e.children.forEach((ele: any) => {
-
-        ele.data.forEach((item: any) => {
-          for (let i = 0; i < this.datesData.length; i++) {
-            if (new Date(item.date).setHours(0, 0, 0, 0) == new Date(this.datesData[i].formateDate).setHours(0, 0, 0, 0) && ele.parent_room_id == e.room_id) {
-              this.datesData[i]['newData'] = item;
-              this.datesData[i].newData['resource'] = ele.room_id;
-              this.datesData[i].newData['start'] = item.date;
-              this.datesData[i].newData['map_change_avail'] = ele.map_change_avail;
-              this.datesData[i].newData['map_change_stay'] = ele.map_change_stay;
-              this.datesData[i].newData['map_change_restriction'] = ele.map_change_restriction;
-              this.datesData[i].newData['map_change_stopsale'] = ele.map_change_stopsale;
-              this.datesData[i].newData['derivedPriceType'] = ele.derivedPriceType;
-              this.datesData[i].newData['parent_room_id'] = ele.parent_room_id;
-              break;
-            }
-          }
-        })
-        ele['datesData'] = JSON.parse(JSON.stringify(this.datesData));
-      })
-    });
   }
 
   closeModal() {
@@ -453,7 +453,7 @@ export class CalendarComponent {
     } else {
       this.loader = false;
       this.errorMsg = "Please Fill the fields";
-      this.alertService.alert("error", "Please Check Fields Again", "Error", { displayDuration: 2000, pos: 'top' });
+      this.alert.alert("error", "Please Check Fields Again", "Error", { displayDuration: 2000, pos: 'top' });
     }
   }
 
@@ -503,22 +503,57 @@ export class CalendarComponent {
     this.modalFieldForm.controls.pr.enable();
   }
 
-   formatDateWithTimezone(startingDay:any, timeZone:any) {
+  formatDateWithTimezone(startingDay: any, timeZone: any) {
     // Parse timeZone string to extract hours and minutes
     const [sign, hours, minutes] = timeZone.match(/([-+])(\d{1,2}):(\d{2})/).slice(1);
     const offsetMilliseconds = (parseInt(hours, 10) * 60 + parseInt(minutes, 10)) * 60000;
     const timeZoneOffset = (sign === '-' ? -1 : 1) * offsetMilliseconds;
-  
+
     const currentDate = new Date();
     currentDate.setUTCDate(startingDay);
     const adjustedDate = new Date(currentDate.getTime() + timeZoneOffset);
-    
+
     const yyyy = adjustedDate.getUTCFullYear();
-    const mm = String(adjustedDate.getUTCMonth() + 1).padStart(2, '0'); 
+    const mm = String(adjustedDate.getUTCMonth() + 1).padStart(2, '0');
     const dd = String(adjustedDate.getUTCDate()).padStart(2, '0');
-  
+
     return `${yyyy}-${mm}-${dd}`;
   }
-  
+
+  importPriceAndAvailability(action: any) {
+
+    this.loader = true;
+
+
+
+    const { url, auth, action_url } = this.constant.ota_api_url[this.currentOtaDetails.site_name];
+    let fullUrl = `${url}/${action_url[action]['url']}`;
+    let queryParamsForApi: any = action_url[action]['params'];
+
+    if (queryParamsForApi) {
+      Object.keys(queryParamsForApi).forEach(key => {
+        if (queryParamsForApi[key]) {
+          fullUrl += `${fullUrl.includes('?') ? '&' : '?'}${key}=${this.currentOtaDetails[key]}`;
+        }
+      });
+    }
+
+    this._service.importCalendarData({ site_details: this.currentOtaDetails, apiUrl: fullUrl, authType: auth }, (res: any) => {
+      if (res.status == 200) {
+        this.fetchData();
+        this.loader = false;
+        this.alert.alert("success", res.message, "Success", { displayDuration: 2000, top });
+      } else {
+        this.alert.alert("trash", res.message, "Error", { displayDuration: 2000, top });
+      }
+    })
+
+
+  }
+
+  backToViewRoom(){
+    this.router.navigate(['view_room',this.currentOtaDetails.room_id])
+  }
+
 
 }

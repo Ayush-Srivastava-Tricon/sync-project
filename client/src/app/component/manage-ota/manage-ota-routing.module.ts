@@ -5,7 +5,7 @@ import { ManageOtaComponent } from './manage-ota.component';
 const routes: Routes = [
   {
     path:'',
-    component:ManageOtaComponent
+    component:ManageOtaComponent,
   }
 ];
 

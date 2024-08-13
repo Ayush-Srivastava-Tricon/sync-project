@@ -3,7 +3,7 @@ const db = require("./config/db.js");
 const dotenv = require('dotenv');
 const cors = require("cors");
 const path = require('path');
-
+const callApi = require("./cron.js");
 
 dotenv.config();
 const app = express();
@@ -15,9 +15,17 @@ app.use('/uploads', express.static(path.join(__dirname, 'routes', 'uploads')));
 app.use(express.json({ extended: false }));
 
 
+app.get("/call",async (req,res) =>{
+
+    const result = await callApi();
+    res.status(200).send({data:result});
+    
+})
+
 
 app.use('/api', require('./routes/userRoutes'));
 app.use('/api', require('./routes/otaRoutes'));
+app.use('/api', require('./routes/reservationRoutes.js'));
 
 
 const PORT = process.env.PORT || 5000;
