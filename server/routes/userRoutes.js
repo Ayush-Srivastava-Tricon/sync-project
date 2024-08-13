@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const connection = require("../config/db.js");
 
+// *********GET USER's LIST FROM DB*********
+
 router.get('/getUsers', async (req, res) => {
 
     try {
@@ -16,15 +18,19 @@ router.get('/getUsers', async (req, res) => {
     }
 });
 
+// ***********USER SIGNUP**********
+
 router.post('/signup', async (req, res) => {
     const { name, email, password } = req.body;
 
     try {
         if (name && email && password) {
-            const sql = `INSERT INTO user (name, email, password) VALUES ('${name}', '${email}', '${password}')`;
-            connection.query(sql, (err, result) => {
+            const sql = `INSERT INTO user (name, email, password) VALUES (?, ?, ?)`;
+            const values = [name,email,password];
+
+            connection.query(sql, values,(err, result) => {
                 if (err) throw err;
-                res.status(200).send({ message: "User Created" })
+                res.status(200).send({ message: "User Created" });
             });
         }
     } catch (err) {
@@ -32,6 +38,9 @@ router.post('/signup', async (req, res) => {
         res.status(500).send('Server error');
     }
 });
+
+
+// *********USER LOGIN**********
 
 router.post('/login', (req, res) => {
     const { email, password } = req.body;

@@ -7,6 +7,8 @@ const fs = require('fs');
 const axios = require("axios");
 const apiMappings = require("../routes/apiMapping.js");
 
+// ******Setting OTA Icon file directory inside route folder**********
+
 const uploadDirectory = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadDirectory)) {
     fs.mkdirSync(uploadDirectory);
@@ -21,7 +23,11 @@ const storage = multer.diskStorage({
     }
 });
 
+// ************Using multer package for uploading ota icons*********
+
 const upload = multer({ storage });
+
+// **********Api to add OTA details with site icon *******
 
 router.post('/addOta', upload.single('siteIcon'), (req, res) => {
     const { siteName, siteEndpoint, siteUser, sitePass, siteApiKey, siteOtherInfo } = req.body;
@@ -39,6 +45,8 @@ router.post('/addOta', upload.single('siteIcon'), (req, res) => {
     });
 });
 
+// **********Fetching All OTA LIST *******
+
 router.get('/getOta', upload.single('siteIcon'), (req, res) => {
     const sql = 'SELECT * FROM ota';
 
@@ -50,6 +58,9 @@ router.get('/getOta', upload.single('siteIcon'), (req, res) => {
         }
     });
 });
+
+
+// **********Fetching Hotel/Property List from Third Party OTA and saving into DB *******
 
 router.post('/get_property_list_and_save', async (req, res) => {
     const { site_details, apiUrl, authType } = req.body;
@@ -76,7 +87,7 @@ router.post('/get_property_list_and_save', async (req, res) => {
             });
 
             propertiesToInsert.forEach(property => {
-                insertProperty(site_details.site_name, property, site_details.ota_id);
+                insertProperty(site_details.site_name, property, site_details.ota_id); 
             });
 
             res.status(200).send({ status: 200, message: 'Hotels Imported' });
@@ -85,6 +96,9 @@ router.post('/get_property_list_and_save', async (req, res) => {
         res.status(500).send('Error fetching data from API or saving to database');
     }
 });
+
+
+// *********This method will insert the fetched list into properties table **********
 
 async function insertProperty(apiSource, apiProperty, ota_id) {
     const property = transformPropertyData(apiSource, apiProperty);
@@ -110,7 +124,6 @@ async function insertProperty(apiSource, apiProperty, ota_id) {
         property.num_of_accoms,
         property.images,
         ota_id
-
     ];
 
     try {
@@ -120,6 +133,8 @@ async function insertProperty(apiSource, apiProperty, ota_id) {
     }
 }
 
+
+//***********FETCH HOTEL/PROPERTY LIST FROM DB*******
 
 router.get("/get_property_list", async (req, res) => {
     try {
@@ -136,7 +151,9 @@ router.get("/get_property_list", async (req, res) => {
         console.log(error);
     }
 
-})
+});
+
+//***********FETCH HOTEL/PROPERTY LIST BY OTA FROM DB*********
 
 router.post("/get_property_by_ota", async (req, res) => {
     try {
@@ -156,6 +173,9 @@ router.post("/get_property_by_ota", async (req, res) => {
     }
 
 });
+
+
+//***********FETCH ROOM LIST FROM THIRD PARTY OTA AND SAVE INTO DB*********
 
 router.post("/get_room_list_and_save", async (req, res) => {
     const { site_details, apiUrl, authType } = req.body;
@@ -210,22 +230,7 @@ router.post("/get_room_list_and_save", async (req, res) => {
     }
 });
 
-router.post("/get_rooms_by_property_and_ota", async (req, res) => {
-    const { ota_id, property_id } = req.body;
-    try {
-        const query = `SELECT * FROM rooms WHERE ota_id = ${ota_id} AND property_id = ${property_id}`;
-        connection.query(query, (err, result) => {
-            if (err) {
-                res.status(500).send('Failed to get room list');
-            } else {
-                res.status(200).send({ message: 'Data Found', status: 200, data: result });
-            }
-        });
-    }
-    catch (error) {
-    }
-
-});
+//***********METHOD WILL INSERT ROOM LIST INTO DB*********
 
 async function insertRooms(room, ota_id, property_id) {
     const query = `INSERT INTO rooms (room_id, name, description, number_of_persons, default_rate, extra_beds, images, ota_id, property_id, rate_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
@@ -249,6 +254,26 @@ async function insertRooms(room, ota_id, property_id) {
     }
 }
 
+//**********FETCH ROOM LIST BY OTA ID AND HOTEL/PROPERTY ID *********
+
+router.post("/get_rooms_by_property_and_ota", async (req, res) => {
+    const { ota_id, property_id } = req.body;
+    try {
+        const query = `SELECT * FROM rooms WHERE ota_id = ${ota_id} AND property_id = ${property_id}`;
+        connection.query(query, (err, result) => {
+            if (err) {
+                res.status(500).send('Failed to get room list');
+            } else {
+                res.status(200).send({ message: 'Data Found', status: 200, data: result });
+            }
+        });
+    }
+    catch (error) {
+    }
+
+});
+
+//**********THESE METHODS WILL GET MAPPING TO MANIPULATE THE KEYS OF THE DATA */
 
 function getMapping(apiSource) {
     return apiMappings[apiSource] || {};
@@ -264,12 +289,13 @@ function transformPropertyData(apiSource, apiProperty) {
     }
 
     if (transformedProperty.images) {
-        // transformedProperty.images = JSON.stringify(transformedProperty.images);
         transformedProperty.images = transformedProperty.images[0];
     }
 
     return transformedProperty;
 }
+
+//***************FETCH CALENDAR LIST FROM THRID PARTY OTA AND SAVE INTO DB****** */
 
 router.post('/import_calendar_data_and_save', async (req, res) => {
     try {
@@ -281,6 +307,8 @@ router.post('/import_calendar_data_and_save', async (req, res) => {
     }
 });
 
+//***************METHOD WILL INSERT DATA INTO DB****** */
+
  const importAndSaveData = async (site_details ,authType,  apiUrl ) => {
     const dateRanges = getDateRanges(site_details?.from);
     for (const range of dateRanges) {
@@ -290,6 +318,9 @@ router.post('/import_calendar_data_and_save', async (req, res) => {
         await saveDataToDatabase(data,site_details);
     }
 };
+
+//***************METHOD WILL GET THE RANGES FOR 'from' and 'till' OF 1 YEAR CALENDAR DATA ****** */
+
 
 const getDateRanges = (startDate) => {
     const ranges = [];
@@ -391,6 +422,9 @@ const saveDataToDatabase = async (data,site_details) => {
 };
 
 
+// *****************FETCH DATA FROM CALENDAR BY START DATE AND END DATE (from and till)*****
+
+
 router.post("/fetch_calendar_data_by_start_end_date",async (req,res)=>{
     try {
 
@@ -434,6 +468,9 @@ router.post("/fetch_calendar_data_by_start_end_date",async (req,res)=>{
     }
 });
 
+
+//***********METHOD WILL FORMAT DATE INTO YYYY-MM-DD */
+
 function formatDate(date) {
     var d = new Date(date),
       month = '' + (d.getMonth() + 1),
@@ -447,8 +484,6 @@ function formatDate(date) {
 
     return [year, month, day].join('-');
   }
-
-
 
 
 module.exports = router;

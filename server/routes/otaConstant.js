@@ -34,20 +34,9 @@ const otaConfig ={
         },
         auth: {
             type: 'apikey',
-            key: 'oyn0qruhvmxckh24untseew33yt4f37jbjy535t5',
+            apikey: 'oyn0qruhvmxckh24untseew33yt4f37jbjy535t5',
         },
        
-    },
-    lazada: {
-        url: 'https://api.opengds.com/core/v1',
-        action_url: {
-            GET_PROPERTY_LIST: 'property_list',
-            GET_ROOM_LIST: 'room_list'
-        },
-        auth: {
-            type: 'bearerToken',
-            token: 'YOUR_LAZADA_BEARER_TOKEN'
-        }
     },
 };
 
