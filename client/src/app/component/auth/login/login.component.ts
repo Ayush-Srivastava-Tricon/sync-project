@@ -18,10 +18,10 @@ export class LoginComponent {
     this._service.login(this.loginObj,(res:any)=>{
       if(res.success){
         this.alert.alert("success",res.message,"Success",{ displayDuration: 1000, pos: 'top' });
-        setTimeout(() => {
-          window.location.href = "/manage_ota";
-        }, 1000);
         localStorage.setItem("isLoggedIn",JSON.stringify(true));
+        setTimeout(() => {
+          window.location.href = "/#/manage_ota";
+        }, 1000);
       }else{
         this.alert.alert("trash",res.message,"Error",{ displayDuration: 1000, pos: 'top' });
       }

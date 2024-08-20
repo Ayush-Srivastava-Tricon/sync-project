@@ -48,6 +48,7 @@ router.post('/login', (req, res) => {
     if (!email || !password) {
       return res.status(400).json({ error: 'Email and password are required' });
     }
+
   
     const sql = 'SELECT email, password FROM user WHERE email = ?';
     const values = [email];

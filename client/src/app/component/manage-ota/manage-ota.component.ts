@@ -3,6 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AdminService } from 'src/app/admin.service';
 import { AlertService } from 'src/app/shared/alert.service';
+import { environment } from 'src/environments/environment.development';
 
 @Component({
   selector: 'app-manage-ota',
@@ -21,8 +22,9 @@ export class ManageOtaComponent {
   currentOtaId: number = 0;
   siteIcon: any = '';
   siteIconFile: any = '';
+  commissionValue:any;
 
-  siteIconPathBaseUrl: any = "http://localhost:3000";
+  siteIconPathBaseUrl: any = environment.baseurl;
   constructor(private alert: AlertService, private fb: FormBuilder, private _adminService: AdminService,private router:Router) {
     this.otaModal = this.fb.group(
       {
@@ -33,6 +35,8 @@ export class ManageOtaComponent {
         site_pass: ['', Validators.required],
         site_apiKey: ['', Validators.required],
         site_otherInfo: ['', Validators.required],
+        commission: ['', [Validators.required,Validators.max(100)]],
+        commissionType: ['', [Validators.required]],
       }
     )
   }
@@ -85,7 +89,9 @@ export class ManageOtaComponent {
   chooseSiteIcon(event: any) {
     const file: any = event.target.files[0];
     this.siteIcon = URL.createObjectURL(file);
+    
     this.siteIconFile = event.target.files[0];
+    
   }
 
   editOtaDetails() {
@@ -94,7 +100,10 @@ export class ManageOtaComponent {
 
   addNewOtaDetails() {
     this.loader = true;
+    console.log(this.otaModal.value);
     if (this.otaModal.status == "VALID") {
+      console.log(this.otaModal.value);
+      
       const formData = new FormData();
       formData.append('siteName', this.otaModal.get('site_name').value);
       formData.append('siteIcon', this.siteIconFile);
@@ -103,6 +112,8 @@ export class ManageOtaComponent {
       formData.append('sitePass', this.otaModal.get('site_pass').value);
       formData.append('siteApiKey', this.otaModal.get('site_apiKey').value);
       formData.append('siteOtherInfo', this.otaModal.get('site_otherInfo').value);
+      formData.append('commission', this.otaModal.get('commission').value);
+      formData.append('commissionType', this.otaModal.get('commissionType').value);
 
       this._adminService.addOta(formData, (res: any) => {
         if (res.status == 200) {
@@ -143,6 +154,16 @@ export class ManageOtaComponent {
       let siteName:any = item.site_name.toLowerCase().split(" ").join("_");
       localStorage.setItem("current_ota_detail",JSON.stringify({"site_name":siteName,"apikey":item.site_apiKey,"endPoint":item.site_endpoint,"theme_id":item.site_otherInfo,"ota_id":item.id,'site_unformat_name':item.site_name}));
       
+    }
+
+    selectCommissioType(event:any){
+      if(event.target.value == 'fixed'){
+        this.otaModal.controls['commission'].setValidators([Validators.required]);
+        this.otaModal.controls['commission'].updateValueAndValidity();
+      }else{
+        this.otaModal.controls['commission'].setValidators([Validators.required,Validators.max(100)]);
+        this.otaModal.controls['commission'].updateValueAndValidity();
+      }
     }
 
 }
