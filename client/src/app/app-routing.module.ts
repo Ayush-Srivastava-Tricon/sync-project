@@ -46,6 +46,10 @@ const routes: Routes = [
     path:'view_room/:id',
     loadChildren:()=>import("./component/manage-ota/view-room/view-room.module").then(m=>m.ViewRoomModule)
   },
+  {
+    path:'manage_user',
+    loadChildren:()=>import("./component/manage-user/manage-user.module").then(m=>m.ManageUserModule)
+  },
 ];
 
 @NgModule({

@@ -48,9 +48,9 @@ export class AdminService extends BaseService {
 
   checkAvailability(params:any,callback:any){
     this.postData(params,this.httpUrls['CHECK_AVAILABLITY'],callback)
-
+    
   }
-
+  
   getListOfReservation(callback:any){
     this.getData({}, this.httpUrls['GET_RESERVATION_LIST'], callback);
   }
@@ -58,6 +58,24 @@ export class AdminService extends BaseService {
   fetchBookingLog(callback:any){
     this.getData({}, this.httpUrls['GET_BOOKING_LOG_LIST'], callback);
   }
+  
+  addUser(params:any,callback:any){
+    this.postData(params,this.httpUrls['ADD_USER'],callback)
+  }
+  
+  fetchUserList(callback:any){
+    this.getData({}, this.httpUrls['GET_USER_LIST'], callback);
+  }
+  
+  editUser(params:any,callback:any){
+    this.postData(params,this.httpUrls['EDIT_USER'],callback)
+  }
+  
+  deleteUser(params:any,callback:any){
+    this.postData(params,this.httpUrls['DELETE_USER'],callback)
+  }
+
+
 
 
 

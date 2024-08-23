@@ -1,4 +1,5 @@
 export const environment = {
     production:true,
-    url:"https://e2xinfotech.com"
+    baseurl:"http://3.212.140.206:5000",
+    url:"http://3.212.140.206:5000/api"
 };

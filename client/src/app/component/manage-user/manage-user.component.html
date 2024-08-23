@@ -1,0 +1,138 @@
+<div class="container-fluid" *ngIf="!showModal.user">
+    <div class="row justify-content-center align-items-center">
+        <div class="col-sm-12">
+            <div class="table-wrapper shadow">
+                <div class="table-title">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <span class="title import-booking">List Users</span>
+                        </div>
+                        <div class="col-sm-6">
+                            <a href="javascript:void(0);" (click)="openModal()" class="btn btn-success"
+                                data-toggle="modal"><span>Add
+                                    User</span></a>
+                        </div>
+                    </div>
+                </div>
+                <table class="table table-shadow table-sm table-hover">
+                    <thead class="thead-dark">
+                        <tr class="table-row-rooms">
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngIf="loader">
+                            <td class="tg-cly1"></td>
+                            <td class="tg-cly1"></td>
+                            <td class="tg-cly1"></td>
+                        </tr>
+                        <tr *ngIf="userList.length==0 && !loader">
+                            <td colspan="3" class="text-center">
+                                No Data
+                            </td>
+                        </tr>
+                        <tr *ngFor="let item of userList;let idx = index;" class="text-center align-middle">
+                            <td>{{item.name}}</td>
+                            <td>{{item.email}}</td>
+                            <td>
+                                <div class="d-flex">
+                                    <button type="button" class="btn btn-primary btn-sm" (click)="editKeeperOpenModal(item)">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                            fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                            <path
+                                                d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z">
+                                            </path>
+                                            <path fill-rule="evenodd"
+                                                d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z">
+                                            </path>
+                                        </svg>
+                                    </button>
+                                    <button type="button" class="btn btn-danger btn-sm mx-2" (click)="deleteKeeperModal(item.id)">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                            fill="currentColor" class="bi bi-person-x-fill" viewBox="0 0 16 16">
+                                            <path fill-rule="evenodd"
+                                                d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m6.146-2.854a.5.5 0 0 1 .708 0L14 6.293l1.146-1.147a.5.5 0 0 1 .708.708L14.707 7l1.147 1.146a.5.5 0 0 1-.708.708L14 7.707l-1.146 1.147a.5.5 0 0 1-.708-.708L13.293 7l-1.147-1.146a.5.5 0 0 1 0-.708">
+                                            </path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<div class="container-fluid mt-2" *ngIf="showModal.user">
+    <div class="my-3 ms-2 d-flex justify-content-between ">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><i class="bi bi-arrow-90deg-left mx-2"></i><a href="javascript:void(0);"
+                        class="text-decoration-none " (click)="backToUser()">Back to Manage User </a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{isEditModal? 'Edit':'Add'}} User</li>
+            </ol>
+        </nav>
+    </div>
+
+    <div class="container p-3 shadow my-3">
+        <div class="form-group row ">
+            <label class="col-sm-5 col-form-label" for="linenFrequency">Name <span class="text-danger">*</span></label>
+            <div class="col-sm-7">
+                <input type="text" id="name" [(ngModel)]="userConfig.name">
+            </div>
+        </div>
+        <div class="form-group row ">
+            <label class="col-sm-5 col-form-label" for="cleanStatus">Email <span class="text-danger">*</span></label>
+            <div class="col-sm-7">
+                <input type="email" id="name" [disabled]="isEditModal" [(ngModel)]="userConfig.email"
+                    placeholder="someone@gmail.com">
+            </div>
+        </div>
+        <div class="form-group row ">
+            <label class="col-sm-5 col-form-label" for="cleanStatus">Password <span class="text-danger">*</span></label>
+            <div class="col-sm-7">
+                <input type="password" id="name" [(ngModel)]="userConfig.password" placeholder="ABCDEFG">
+            </div>
+        </div>
+
+        <div class="form-buttons">
+            <div class="d-flex align-items-center">
+                <button type="submit" class="btn btn-success" (click)="isEditModal ? editUser() : saveUser()"
+                    [disabled]="loader">{{isEditModal? 'Update':'Save'}}</button>
+                <div class="spinner-border text-primary mx-2" *ngIf="loader"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- DELETE Modal -->
+<div class="modal" *ngIf="showModal.delete">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content delete-modal">
+            <div class="modal-body">
+                <ng-container *ngIf="showModal.delete">
+                    <div class="modal-header flex-row">
+                        <h4 class="modal-title w-100">Are you sure?</h4>
+                        <button (click)="closeModal()" type="button" class="btn btn-sm btn-ligt close">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Do you really want to delete the User ?</p>
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal"
+                            (click)="closeModal()">Cancel</button>
+                        <button type="button" class="btn btn-outline-danger" (click)="deleteUser()">Delete</button>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-backdrop fade in" *ngIf="showModal.delete"></div>

@@ -26,6 +26,10 @@ export class BaseService {
     'CHECK_AVAILABLITY':'/check_room_availability',
     'GET_RESERVATION_LIST':'/get_reservation_list',
     'GET_BOOKING_LOG_LIST':'/get_booking_log',
+    'GET_USER_LIST':'/get_user_list',
+    'ADD_USER':'/add_user',
+    'EDIT_USER':'/edit_user',
+    'DELETE_USER':'/delete_user',
 
   }
 

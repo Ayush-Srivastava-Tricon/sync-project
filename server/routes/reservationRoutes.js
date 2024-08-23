@@ -104,23 +104,23 @@ router.post("/booking_availability", async (req, response) => {
     const otaQuery = `SELECT o.id, o.site_name, o.site_apiKey AS apiKey FROM OTA o JOIN rooms r ON o.id = r.ota_id WHERE r.room_id = ? AND r.property_id = ?`;
     const value = [roomId, hotelId];
 
-    const valueForParamData={
-        rate_id:rateId,
-        accom_id:roomId,
-        occupancy:occupancy.adults,
+    const valueForParamData = {
+        rate_id: rateId,
+        accom_id: roomId,
+        occupancy: occupancy.adults,
     };
 
 
-    let url =  await new Promise((resolve,reject)=>{
-        connection.query(otaQuery,value,(err,result)=>{
-           if(!err){
-            fullUrl = getApiUrl(result[0],'GET_CALENDAR_DATA',valueForParamData);
-            resolve(fullUrl)
-           }
+    let url = await new Promise((resolve, reject) => {
+        connection.query(otaQuery, value, (err, result) => {
+            if (!err) {
+                fullUrl = getApiUrl(result[0], 'GET_CALENDAR_DATA', valueForParamData);
+                resolve(fullUrl)
+            }
         });
     });
 
-     url = `${url}&from=${checkIn}&till=${checkOut}`;
+    url = `${url}&from=${checkIn}&till=${checkOut}`;
 
     const result = await axios.get(url);
 
@@ -258,7 +258,7 @@ async function createBookingForOTA(requestBody, orderStatus, remark) {
     connection.query(otaQuery, value, async (err, result) => {
         if (!err) {
 
-            const bookingUrl =  getApiUrl(result[0], 'CREATE_RESERVATION_BOOKING',{});
+            const bookingUrl = getApiUrl(result[0], 'CREATE_RESERVATION_BOOKING', {});
 
             const params = {
                 rate_id: requestBody.ratePlanId,
@@ -271,14 +271,13 @@ async function createBookingForOTA(requestBody, orderStatus, remark) {
                 phone: requestBody.contact.telephone,
                 email: requestBody.contact.email,
             }
-
             await axios.post(bookingUrl, params)
                 .then(async (response) => {
 
                     await entryIntoBookingLog(response, requestBody, orderStatus, remark);
                 })
                 .catch((error) => console.error(error));
-        }else{
+        } else {
             console.log(err);
         }
     })
@@ -353,7 +352,7 @@ router.get("/get_booking_log", async (req, res) => {
 // ************METHOD WILL DYNAMICALLY CREATE A URL FOR CALLING THIRD PARTY API OF DIFFERENT OTA'S********
 
 
- function getApiUrl(result, actionUrl,valueForParamData) {
+function getApiUrl(result, actionUrl, valueForParamData) {
     let ota_site_name = result.site_name.toLowerCase().split(" ").join("_");
     let apikey = result.apiKey;
 
@@ -380,6 +379,69 @@ router.get("/get_booking_log", async (req, res) => {
     return fullUrl;
 }
 
+
+// **************API TO VERIFY BOOKING *********
+
+router.post("/booking_verify", async (req, res) => {
+    const { bookingRefId } = req.body;
+
+    const query = `SELECT bookings.*, log.orderStatus AS orderStatus FROM bookings JOIN booking_logs log ON bookings.bookingRefId = log.bookingRefId WHERE bookings.bookingRefId = ? `;
+    const value = [bookingRefId];
+
+    connection.query(query, value, (err, result) => {
+        if (!err) {
+            console.log(result);
+            const parsedResults = result.map(row => ({
+                ...row,
+                orderStatus: result[0].orderStatus,
+                guests: JSON.parse(row.guests),
+                guestCount: JSON.parse(row.guestCount),
+                contact: JSON.parse(row.contact),
+            }));
+            res.send({ status: 200, message: "Booking Found", data: parsedResults });
+        } else {
+            console.log(err);
+            res.send({ status: 400, message: "Booking not found" });
+        }
+    })
+
+});
+
+// **************API TO CANCEL BOOKING *********
+
+router.post("/booking_cancel", async (req, res) => {
+    const { bookingRefId } = req.body;
+
+    const cancelQuery = `UPDATE booking_logs SET orderStatus = 'ORDER_CANCEL' WHERE bookingRefId = '${bookingRefId}'`;
+
+    connection.query(cancelQuery, (err, result) => {
+        if (!err) {
+            console.log(result);
+            const response = {
+                    "orderStatus": "ORDER_CANCEL",
+                    "bookingRefId": bookingRefId,
+                    "cancellationFees": 0
+            };
+
+            if(cancelBookingForOTA(bookingRefId)){
+                res.send({ status: 200, message: "Booking Cancelled", data: response });
+            }else{
+                res.send({ status: 400, message: "Something went wrong"});
+            }
+
+        } else {
+            console.log(err);
+            res.send({ status: 400, message: "Something went wrong" });
+        }
+    })
+
+});
+
+function cancelBookingForOTA(bookingRefId){
+
+    const query = `SELECT ota`
+
+}
 
 
 module.exports = router;

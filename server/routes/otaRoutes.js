@@ -30,11 +30,11 @@ const upload = multer({ storage });
 // **********Api to add OTA details with site icon *******
 
 router.post('/addOta', upload.single('siteIcon'), (req, res) => {
-    const { siteName, siteEndpoint, siteUser, sitePass, siteApiKey, siteOtherInfo } = req.body;
+    const { siteName, siteEndpoint, siteUser, sitePass, siteApiKey, siteOtherInfo, commission, commissionType } = req.body;
     const siteIconPath = req.file ? '/uploads/' + req.file.filename : null;
 
-    const sql = 'INSERT INTO ota (site_name, site_icon, site_endpoint, site_user, site_pass, site_apikey, site_otherinfo) VALUES (?, ?, ?, ?, ?, ?, ?)';
-    const values = [siteName, siteIconPath, siteEndpoint, siteUser, sitePass, siteApiKey, siteOtherInfo];
+    const sql = 'INSERT INTO ota (site_name, site_icon, site_endpoint, site_user, site_pass, site_apikey, site_otherinfo, commission, commissionType) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    const values = [siteName, siteIconPath, siteEndpoint, siteUser, sitePass, siteApiKey, siteOtherInfo, commission, commissionType];
 
     connection.query(sql, values, (err, result) => {
         if (err) {
@@ -87,7 +87,7 @@ router.post('/get_property_list_and_save', async (req, res) => {
             });
 
             propertiesToInsert.forEach(property => {
-                insertProperty(site_details.site_name, property, site_details.ota_id); 
+                insertProperty(site_details.site_name, property, site_details.ota_id);
             });
 
             res.status(200).send({ status: 200, message: 'Hotels Imported' });
@@ -157,7 +157,7 @@ router.get("/get_property_list", async (req, res) => {
 
 router.post("/get_property_by_ota", async (req, res) => {
     try {
-        const sql = 'SELECT * FROM properties ';
+        const sql = 'SELECT * FROM properties WHERE ota_id = ?';
         const values = [req.body.ota_id];
         connection.query(sql, values, (err, result) => {
             if (err) {
@@ -299,9 +299,9 @@ function transformPropertyData(apiSource, apiProperty) {
 
 router.post('/import_calendar_data_and_save', async (req, res) => {
     try {
-        const {site_details,authType,apiUrl} = req.body;
-        await importAndSaveData(site_details ,authType ,apiUrl);
-        res.send({message:'Data fetched and saved successfully',status:200});
+        const { site_details, authType, apiUrl } = req.body;
+        await importAndSaveData(site_details, authType, apiUrl);
+        res.send({ message: 'Data fetched and saved successfully', status: 200 });
     } catch (error) {
         res.status(500).send('Error fetching data df sdf');
     }
@@ -309,13 +309,13 @@ router.post('/import_calendar_data_and_save', async (req, res) => {
 
 //***************METHOD WILL INSERT DATA INTO DB****** */
 
- const importAndSaveData = async (site_details ,authType,  apiUrl ) => {
+const importAndSaveData = async (site_details, authType, apiUrl) => {
     const dateRanges = getDateRanges(site_details?.from);
     for (const range of dateRanges) {
         const { from, till } = range;
         const url = `${apiUrl}&from=${from}&till=${till}`;
-        const data = await fetchCalendarData(from, till,authType,url);
-        await saveDataToDatabase(data,site_details);
+        const data = await fetchCalendarData(from, till, authType, url);
+        await saveDataToDatabase(data, site_details);
     }
 };
 
@@ -329,52 +329,52 @@ const getDateRanges = (startDate) => {
     const start = startDate ? new Date(startDate) : formatDate(new Date());
 
     const end = new Date(start);
-    
-    end.setDate(new Date(start).getDate() + daysInYear - 1); 
-    
+
+    end.setDate(new Date(start).getDate() + daysInYear - 1);
+
     let currentStart = new Date(start);
-    
-    
+
+
     while (currentStart <= end) {
         let currentEnd = new Date(currentStart);
         currentEnd.setDate(currentEnd.getDate() + chunkSize - 1);
-        
+
         if (currentEnd > end) {
             currentEnd = end;
         }
-        
+
         ranges.push({
             from: currentStart.toISOString().split('T')[0],
             till: currentEnd.toISOString().split('T')[0]
         });
-        
+
         currentStart.setDate(currentStart.getDate() + chunkSize);
     }
-    
 
-    
+
+
     if (ranges.length > 0) {
         const lastRange = ranges[ranges.length - 1];
         const finalEndDate = new Date(start);
 
-        console.log(lastRange , finalEndDate);
+        console.log(lastRange, finalEndDate);
         finalEndDate.setDate(finalEndDate.getDate() + daysInYear - 1); // -1 to get the actual end date
         if (lastRange.till !== finalEndDate.toISOString().split('T')[0]) {
             ranges[ranges.length - 1] = { ...lastRange, till: finalEndDate.toISOString().split('T')[0] };
         }
     }
-    
+
 
     return ranges;
 };
 
-const fetchCalendarData = async (from, till,authType,apiUrl) => {
+const fetchCalendarData = async (from, till, authType, apiUrl) => {
     try {
         const headers = {};
         if (authType && authType.type === 'bearerToken') {
             headers['Authorization'] = `Bearer ${authType.token}`;
         }
-        const response = await axios.get(apiUrl, {headers});
+        const response = await axios.get(apiUrl, { headers });
         return response.data;
 
     } catch (error) {
@@ -382,10 +382,30 @@ const fetchCalendarData = async (from, till,authType,apiUrl) => {
     }
 };
 
-const saveDataToDatabase = async (data,site_details) => {
+const saveDataToDatabase = async (data, site_details) => {
+    console.log("SAVE TP DADTABSE0");
     const query = `INSERT INTO calendar 
     (room_id, rate_id, start_date, available, rate, min, max, ota_id, property_id, room_name) 
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
+    const commissionQuery = `SELECT commission, commissionType FROM ota WHERE id = ?`;
+    const commissionValue = [site_details.ota_id];
+
+
+    const commission = (query, values) => {
+        return new Promise((resolve, reject) => {
+            connection.query(query, values, (error, results) => {
+                if (error) {
+                    reject(error);
+                    console.log(error);
+                } else {
+                    resolve(results);
+                }
+            });
+        });
+    };
+
+    const commissionResult = await commission(commissionQuery, commissionValue);
 
     const queryAsync = (query, values) => {
         return new Promise((resolve, reject) => {
@@ -406,7 +426,7 @@ const saveDataToDatabase = async (data,site_details) => {
                 site_details.rate_id,
                 item.date,
                 item.available || 5,
-                item.rate,
+                item.rate = commissionResult[0].commissionType == 'fixed' ? (+item.rate + +commissionResult[0].commission) : (+item.rate + getCalculatedRoomRate(item.rate, commissionResult[0].commission)),
                 item.minlos,
                 item.maxlos,
                 site_details.ota_id,
@@ -421,50 +441,54 @@ const saveDataToDatabase = async (data,site_details) => {
     }
 };
 
+function getCalculatedRoomRate(rate, commission) {
+    return +((commission / 100) * rate).toFixed(2);
+}
+
 
 // *****************FETCH DATA FROM CALENDAR BY START DATE AND END DATE (from and till)*****
 
 
-router.post("/fetch_calendar_data_by_start_end_date",async (req,res)=>{
+router.post("/fetch_calendar_data_by_start_end_date", async (req, res) => {
     try {
 
-            const {start_date,room_id,ota_id,property_id,end_date} = req.body;
+        const { start_date, room_id, ota_id, property_id, end_date } = req.body;
 
-            if (end_date) {
-                query = `SELECT * 
+        if (end_date) {
+            query = `SELECT * 
                          FROM calendar
                          WHERE ota_id = ? 
                            AND property_id = ? 
                            AND room_id = ? 
                            AND start_date >= ? 
                            AND start_date <= ?`;
-                values = [ota_id, property_id, room_id, start_date, end_date];
-            } else {
-                query = `SELECT * 
+            values = [ota_id, property_id, room_id, start_date, end_date];
+        } else {
+            query = `SELECT * 
                          FROM calendar
                          WHERE ota_id = ? 
                            AND property_id = ? 
                            AND room_id = ? 
                            AND start_date >= ? 
                            AND start_date < DATE_ADD(?, INTERVAL 1 MONTH)`;
-                values = [ota_id, property_id, room_id, start_date, start_date];
-            }
+            values = [ota_id, property_id, room_id, start_date, start_date];
+        }
 
-            connection.query(query, values, (error, results) => {
-                if (error) {
-                    console.error('Error fetching data:', error.message);
-                } else {
-                    const data = [{
-                        room_id : room_id,
-                        room_name: results?.[0]?.room_name,
-                        data:results
-                    }]
-                    res.send({message:'Data Found',data:data,status:200});
-                }
-            });
+        connection.query(query, values, (error, results) => {
+            if (error) {
+                console.error('Error fetching data:', error.message);
+            } else {
+                const data = [{
+                    room_id: room_id,
+                    room_name: results?.[0]?.room_name,
+                    data: results
+                }]
+                res.send({ message: 'Data Found', data: data, status: 200 });
+            }
+        });
 
     } catch (error) {
-        
+
     }
 });
 
@@ -473,17 +497,17 @@ router.post("/fetch_calendar_data_by_start_end_date",async (req,res)=>{
 
 function formatDate(date) {
     var d = new Date(date),
-      month = '' + (d.getMonth() + 1),
-      day = '' + d.getDate(),
-      year = d.getFullYear();
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
 
     if (month.length < 2)
-      month = '0' + month;
+        month = '0' + month;
     if (day.length < 2)
-      day = '0' + day;
+        day = '0' + day;
 
     return [year, month, day].join('-');
-  }
+}
 
 
 module.exports = router;

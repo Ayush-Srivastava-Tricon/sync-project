@@ -30,7 +30,14 @@ const otaConfig ={
                 params:{
                     apikey:true
                 }
-            }
+            },
+            CANCEL_BOOKING:{
+                url:'acc-reservation/cancel',
+                params:{
+                    apikey:true
+                }
+            },
+            
         },
         auth: {
             type: 'apikey',

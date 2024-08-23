@@ -7,7 +7,7 @@ import {HttpClientModule} from "@angular/common/http";
 import { AuthService } from './service/auth.service';
 import { BaseService } from './service/base.service';
 import { HeaderModule } from './component/header/header.module';
-import { HashLocationStrategy } from '@angular/common';
+import { HashLocationStrategy,LocationStrategy } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -19,7 +19,7 @@ import { HashLocationStrategy } from '@angular/common';
     HttpClientModule,
     HeaderModule
   ],
-  providers: [AuthService,BaseService,HashLocationStrategy],
+  providers: [{provide:LocationStrategy,useClass:HashLocationStrategy},AuthService,BaseService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

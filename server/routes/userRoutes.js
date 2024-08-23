@@ -20,24 +20,24 @@ router.get('/getUsers', async (req, res) => {
 
 // ***********USER SIGNUP**********
 
-router.post('/signup', async (req, res) => {
-    const { name, email, password } = req.body;
+// router.post('/signup', async (req, res) => {
+//     const { name, email, password } = req.body;
 
-    try {
-        if (name && email && password) {
-            const sql = `INSERT INTO user (name, email, password) VALUES (?, ?, ?)`;
-            const values = [name,email,password];
+//     try {
+//         if (name && email && password) {
+//             const sql = `INSERT INTO user (name, email, password) VALUES (?, ?, ?)`;
+//             const values = [name,email,password];
 
-            connection.query(sql, values,(err, result) => {
-                if (err) throw err;
-                res.status(200).send({ message: "User Created" });
-            });
-        }
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).send('Server error');
-    }
-});
+//             connection.query(sql, values,(err, result) => {
+//                 if (err) throw err;
+//                 res.status(200).send({ message: "User Created" });
+//             });
+//         }
+//     } catch (err) {
+//         console.error(err.message);
+//         res.status(500).send('Server error');
+//     }
+// });
 
 
 // *********USER LOGIN**********
@@ -48,8 +48,8 @@ router.post('/login', (req, res) => {
     if (!email || !password) {
       return res.status(400).json({ error: 'Email and password are required' });
     }
-  
-    const sql = 'SELECT email, password FROM user WHERE email = ?';
+
+    const sql = 'SELECT email, password, role FROM user WHERE email = ?';
     const values = [email];
   
     connection.query(sql, values, (err, results) => {
@@ -67,12 +67,95 @@ router.post('/login', (req, res) => {
       }
   
       if (userExists) {
-        res.json({ success: true, message: 'Login successful' });
+        res.json({ success: true, message: 'Login successful', role: results[0].role});
       } else {
         res.status(400).json({ success: false, message: 'Invalid credentials' });
       }
     });
   });
+
+  // *********Add User**********
+
+ router.post('/add_user', async (req, res) => {
+    const { name, email, password,role } = req.body;
+
+    try {
+        if (name && email && password) {
+            const sql = `INSERT INTO user (name, email, password, role) VALUES (?, ?, ?, ?)`;
+            const values = [name,email,password,role];
+
+            connection.query(sql, values,(err, result) => {
+              if(!err){
+                res.status(200).send({ message: "User Created",status:200 });
+              }else{
+                res.status(400).send({ message: err.sqlMessage,status:400 });
+              }
+               
+            });
+        }
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error');
+    }
+});
+
+  // *********Fetch User**********
+
+ router.get('/get_user_list', async (req, res) => {
+    try {
+            const sql = `SELECT * FROM user WHERE role = 'user' `;
+            connection.query(sql,(err, result) => {
+                if (err) throw err;
+                res.status(200).send({ message: "Success",status:200,data:result});
+            });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error');
+    }
+});
+  // *********Edit User**********
+
+ router.post('/edit_user', async (req, res) => {
+    const { name, email, password ,id } = req.body;
+
+    try {
+            const sql = `UPDATE user SET name = ?, email = ?, password = ? WHERE id = ?`;
+            const values = [name, email, password, id];
+            connection.query(sql, values,(err, result) => {
+              if(!err){
+                res.status(200).send({ message: "Details Updated",status:200 });
+              }else{
+                res.status(400).send({ message: err.sqlMessage,status:400 });
+              }
+            });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error');
+    }
+});
+  // *********Delete User**********
+
+ router.post('/delete_user', async (req, res) => {
+    const { id } = req.body;
+
+    try {
+        if (id) {
+            const sql = `DELETE FROM user WHERE id = ? `;
+            const values = [id];
+            connection.query(sql, values,(err, result) => {
+              if(!err){
+                res.status(200).send({ message: "User Deleted",status:200 });
+              }else{
+                res.status(400).send({ message: err.sqlMessage,status:400 });
+              }
+            });
+        }
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error');
+    }
+});
+ 
 
 
 module.exports = router;
