@@ -8,7 +8,18 @@ import { AdminService } from 'src/app/admin.service';
 })
 export class HeaderComponent {
 
+  isAdmin:boolean=false;
+
   constructor(private _service:AdminService){
     
+  }
+
+  ngOnInit(){
+    this.isAdmin = JSON.parse(<any>localStorage.getItem("role")) == 'admin';
+  }
+
+  logOut(){
+    localStorage.clear();
+    window.location.href = "/";
   }
 }

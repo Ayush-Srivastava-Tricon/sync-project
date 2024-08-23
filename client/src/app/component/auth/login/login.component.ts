@@ -19,6 +19,7 @@ export class LoginComponent {
       if(res.success){
         this.alert.alert("success",res.message,"Success",{ displayDuration: 1000, pos: 'top' });
         localStorage.setItem("isLoggedIn",JSON.stringify(true));
+        localStorage.setItem("role",JSON.stringify(res.role));
         setTimeout(() => {
           window.location.href = "/#/manage_ota";
         }, 1000);
