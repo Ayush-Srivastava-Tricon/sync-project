@@ -16,6 +16,14 @@ export class AdminService extends BaseService {
     this.postData(formData, this.httpUrls['ADD_OTA'], callback);
   }
 
+  editOta(formData: any, callback: any) {
+    this.postData(formData, this.httpUrls['EDIT_OTA'], callback);
+  }
+
+  deleteOta(params: any, callback: any) {
+    this.postData(params, this.httpUrls['DELETE_OTA'], callback);
+  }
+
   getOtaList(callback: any) {
     this.getData({}, this.httpUrls['GET_OTA_LIST'], callback);
   }

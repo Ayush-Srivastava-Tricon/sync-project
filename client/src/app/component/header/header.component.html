@@ -6,15 +6,9 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <!-- <li class="nav-item">
-            <a class="nav-link text-light" #rla routerLinkActive="active" href="javascript:void(0);" [routerLink]="['/view_calendar']">Calendar</a>
-          </li> -->
           <li class="nav-item">
             <a class="nav-link text-light" href="javascript:void(0);" #rla routerLinkActive="active" [routerLink]="['/manage_ota']">Manage OTA</a>
           </li>
-          <!-- <li class="nav-item">
-            <a class="nav-link text-light" href="javascript:void(0);" #rla routerLinkActive="active" [routerLink]="['/add_reservation']">Add Reservation</a>
-          </li> -->
           <li class="nav-item">
             <a class="nav-link text-light" href="javascript:void(0);" #rla routerLinkActive="active" [routerLink]="['/list_reservation']">List Reservation</a>
           </li>
@@ -24,17 +18,6 @@
           <li class="nav-item" *ngIf="isAdmin">
             <a class="nav-link text-light" href="javascript:void(0);" #rla routerLinkActive="active" [routerLink]="['/manage_user']">Manage User</a>
           </li>
-          <!-- <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle text-light" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Dropdown
-            </a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="javascript:void(0);">Action</a></li>
-              <li><a class="dropdown-item" href="javascript:void(0);">Another action</a></li>
-              <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item" href="javascript:void(0);">Something else here</a></li>
-            </ul>
-          </li> -->
         </ul>
       </div>
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">

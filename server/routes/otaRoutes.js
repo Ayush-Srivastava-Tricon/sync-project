@@ -45,6 +45,55 @@ router.post('/addOta', upload.single('siteIcon'), (req, res) => {
     });
 });
 
+// **********Api to Edit OTA details with site icon *******
+
+router.post('/editOta',  upload.single('siteIcon'),(req, res) => {
+    const { siteName, siteEndpoint, siteUser, sitePass, siteApiKey, siteOtherInfo, commission, commissionType, id } = req.body;
+    const siteIconPath =  req.file ? '/uploads/' + req.file.filename : null;
+
+    const sql = `
+    UPDATE ota
+    SET 
+      site_name = ?,
+      site_icon = ?,
+      site_endpoint = ?,
+      site_user = ?,
+      site_pass = ?,
+      site_apikey = ?,
+      site_otherinfo = ?,
+      commission = ?,
+      commissionType = ?
+    WHERE id = ?`;
+
+    const values = [siteName, siteIconPath, siteEndpoint, siteUser, sitePass, siteApiKey, siteOtherInfo, commission, commissionType,id];
+
+    connection.query(sql, values, (err, result) => {
+        if (err) {
+            res.status(500).send('Failed to upload site information');
+        } else {
+            res.status(200).send({ message: 'OTA Updated successfully', status: 200 });
+        }
+    });
+});
+
+// **********Api to Delete OTA details with site icon *******
+
+router.post('/deleteOta',(req, res) => {
+    const { id } = req.body;
+
+    const sql = `DELETE FROM ota WHERE id = ?`;
+
+    const values = [id];
+
+    connection.query(sql, values, (err, result) => {
+        if (err) {
+            res.status(500).send({ message: 'Something went wrong', status: 500 });
+        } else {
+            res.status(200).send({ message: 'Deleted successfully', status: 200 });
+        }
+    });
+});
+
 // **********Fetching All OTA LIST *******
 
 router.get('/getOta', upload.single('siteIcon'), (req, res) => {

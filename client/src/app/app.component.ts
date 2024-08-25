@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { NavigationStart, Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -9,7 +10,16 @@ export class AppComponent {
   title = 'client';
   isLoggedIn:boolean=false;
 
-  ngOnInit(){
-   this.isLoggedIn =  JSON.parse(<any>localStorage.getItem("isLoggedIn"));
-  }
+  constructor(private router: Router) {
+      router.events.forEach((event) => {
+        if (event instanceof NavigationStart) {
+          if (event['url'] == '/login' || event.url == '/') {
+            this.isLoggedIn = false;
+          } else {
+            this.isLoggedIn = true;
+          }
+        }
+      });
+    }
+
 }
