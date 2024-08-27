@@ -80,7 +80,6 @@ export class CalendarComponent {
 
   fetchData() {
     let params: any = {
-
       start_date: this.currentOtaDetails.from,
       room_id: this.currentOtaDetails.room_id,
       ota_id: this.currentOtaDetails.ota_id,
@@ -260,14 +259,15 @@ export class CalendarComponent {
     if ((this.currentDate.getMonth() + 1) != (new Date().getMonth() + 1)) {
       this.selectDate = '';
       let selectedRangeDate: any = document.getElementById("date");
-      let setFirstMonthDate: any = new Date(this.currentDate).setDate(1)
+      let setFirstMonthDate: any = new Date(this.currentDate).setDate(1);
       selectedRangeDate.value = this.formatDate(new Date(setFirstMonthDate));
-      // this.fetchCalendarData(this.formatDate(this.currentDate), false);
+      let now :any = new Date(setFirstMonthDate);
+      this.selectedDate({ target: { value: this.formatDate(now) }});
     } else {
       this.selectDate = new Date();
       let selectedRangeDate: any = document.getElementById("date");
       selectedRangeDate.value = this.formatDate(this.selectDate);
-      // this.fetchCalendarData(this.formatDate(this.selectDate), true);
+      this.selectedDate({ target: { value: this.formatDate(this.selectDate) }});
     }
   }
 
@@ -280,12 +280,13 @@ export class CalendarComponent {
       let selectedRangeDate: any = document.getElementById("date");
       let setFirstMonthDate: any = new Date(this.currentDate).setDate(1)
       selectedRangeDate.value = this.formatDate(new Date(setFirstMonthDate));
-      // this.fetchCalendarData(this.formatDate(this.currentDate), false);
+      let now :any = new Date(setFirstMonthDate);
+      this.selectedDate({ target: { value: this.formatDate(now) }});
     } else {
       this.selectDate = new Date();
       let selectedRangeDate: any = document.getElementById("date");
       selectedRangeDate.value = this.formatDate(this.selectDate);
-      // this.fetchCalendarData(this.formatDate(this.selectDate), true);
+      this.selectedDate({ target: { value: this.formatDate(this.selectDate) }});
     }
   }
 
@@ -521,11 +522,7 @@ export class CalendarComponent {
   }
 
   importPriceAndAvailability(action: any) {
-
     this.loader = true;
-
-
-
     const { url, auth, action_url } = this.constant.ota_api_url[this.currentOtaDetails.site_name];
     let fullUrl = `${url}/${action_url[action]['url']}`;
     let queryParamsForApi: any = action_url[action]['params'];
@@ -544,6 +541,7 @@ export class CalendarComponent {
         this.loader = false;
         this.alert.alert("success", res.message, "Success", { displayDuration: 2000, top });
       } else {
+        this.loader = false;
         this.alert.alert("trash", res.message, "Error", { displayDuration: 2000, top });
       }
     })

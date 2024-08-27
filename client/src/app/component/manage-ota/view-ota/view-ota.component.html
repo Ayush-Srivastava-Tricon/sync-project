@@ -24,7 +24,7 @@
                                     <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/>
                                     <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/>
                                   </svg></span></button>
-                            <a href="javascript:void(0);"(click)="importHotels('GET_PROPERTY_LIST')" class="btn btn-success import-btn"
+                            <a href="javascript:void(0);"(click)="importHotels('GET_PROPERTY_LIST')" class="btn btn-success import-btn" [ngClass]="{'disabled':loader}"
                                 data-toggle="modal"><span>Import Hotels</span></a>
                         </div>
                     </div>
@@ -50,7 +50,6 @@
                             <td class="tg-cly1"></td>
                             <td class="tg-cly1"></td>
                             <td class="tg-cly1"></td>
-                            <td class="tg-cly1"></td>
                         </tr>
                         <ng-container *ngIf="propertyList.length == 0 && !loader">
                           <tr>
@@ -69,7 +68,7 @@
                                 <td><a href="javascript:void(0);" class="text-primary" (click)="viewRoom(item)">View Room</a></td>
                                 <td class="action-btn">
                                     <div class="d-flex" *ngIf="showActionDropDown[idx]">
-                                      <button type="button" class="btn btn-sm btn-light " [title]="item.isEditable ? 'Save' : 'Edit'" (click)="item.isEditable=!item.isEditable">
+                                      <!-- <button type="button" class="btn btn-sm btn-light " [title]="item.isEditable ? 'Save' : 'Edit'" (click)="item.isEditable=!item.isEditable">
                                         <ng-container *ngIf="!item.isEditable">
                                           <svg xmlns="http://www.w3.org/2000/svg"  width="16" height="16" fill="currentColor"
                                             class="bi bi-pencil-square" viewBox="0 0 16 16">
@@ -90,8 +89,8 @@
                                               d="M3 16h10v-5.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5zm9-16H4v5.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5zM9 1h2v4H9z" />
                                           </svg>
                                         </ng-container>
-                                      </button>
-                                      <button type="button" class="btn btn-sm btn-outline-danger mx-2" (click)="toggleDeleteModal(idx)">
+                                      </button> -->
+                                      <button type="button" class="btn btn-sm btn-outline-danger mx-2" (click)="toggleDeleteModal(item.property_id)">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                           class="bi bi-trash3-fill" viewBox="0 0 16 16">
                                           <path
@@ -152,5 +151,29 @@
   </div>
 </div>
 
+<!-- Modal -->
+<div class="modal" *ngIf="showDeleteModal">
+  <div class="modal-dialog" role="document">
+      <div class="modal-content delete-modal">
+          <div class="modal-body">
+              <ng-container *ngIf="showDeleteModal">
+                  <div class="modal-header flex-row">
+                      <h4 class="modal-title w-100">Are you sure?</h4>
+                      <button (click)="closeModal()" type="button" class="btn btn-sm btn-ligt close">&times;</button>
+                  </div>
+                  <div class="modal-body">
+                      <p>This process can't be undone ?</p>
+                  </div>
+                  <div class="modal-footer justify-content-center">
+                      <button type="button" class="btn btn-danger" data-dismiss="modal"
+                          (click)="closeModal()">Cancel</button>
+                      <button type="button" class="btn btn-outline-danger"
+                          (click)="deleteProperty()">Delete</button>
+                  </div>
+              </ng-container>
+          </div>
+      </div>
+  </div>
+</div>
 
-<div class="modal-backdrop fade in" *ngIf="showDetailModal"></div>
+<div class="modal-backdrop fade in" *ngIf="showDetailModal || showDeleteModal "></div>

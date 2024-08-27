@@ -223,6 +223,28 @@ router.post("/get_property_by_ota", async (req, res) => {
 
 });
 
+//***********DELETE HOTEL/PROPERTY*********
+
+router.post("/delete_property", async (req, res) => {
+    try {
+        const {id} = req.body;
+        const sql = `DELETE FROM properties WHERE property_id = ?`;
+        const values = [id];
+        connection.query(sql, values, (err, result) => {
+            if (err) {
+                console.error(err);
+                res.status(500).send('Failed to Delete property');
+            } else {
+                res.status(200).send({ message: 'Deleted', status: 200 });
+            }
+        });
+    }
+    catch (error) {
+        console.log(error);
+    }
+
+});
+
 
 //***********FETCH ROOM LIST FROM THIRD PARTY OTA AND SAVE INTO DB*********
 
@@ -319,7 +341,28 @@ router.post("/get_rooms_by_property_and_ota", async (req, res) => {
     }
     catch (error) {
     }
+});
 
+
+//**********DELETE ROOM *********
+
+router.post("/delete_room", async (req, res) => {
+    try {
+        const {id} = req.body;
+        const sql = `DELETE FROM rooms WHERE room_id = ?`;
+        const values = [id];
+        connection.query(sql, values, (err, result) => {
+            if (err) {
+                console.error(err);
+                res.status(500).send('Failed to Delete Room');
+            } else {
+                res.status(200).send({ message: 'Deleted', status: 200 });
+            }
+        });
+    }
+    catch (error) {
+        console.log(error);
+    }
 });
 
 //**********THESE METHODS WILL GET MAPPING TO MANIPULATE THE KEYS OF THE DATA */

@@ -17,6 +17,8 @@ export class ViewOtaComponent {
   showActionDropDown:any={};
   showDetailModal:boolean=false;
   propertyDetailsConfig:any={};
+  showDeleteModal:boolean=false;
+  currentPropertyId:any='';
 
   constructor(private _service:AdminService,private router:Router,public constant:AppConstants,private alert:AlertService){}
 
@@ -26,29 +28,32 @@ export class ViewOtaComponent {
   }
 
   importHotels(action:any){
+    this.loader=true;
     const { url, auth, action_url } = this.constant.ota_api_url[this.currentOtaDetail.site_name];
     let fullUrl = `${url}/${action_url[action]['url']}`;
     let queryParamsForApi:any = action_url[action]['params'];
-
+    
     if (queryParamsForApi) {
-        Object.keys(queryParamsForApi).forEach(key => {
-            if (queryParamsForApi[key]) {
-                fullUrl += `${fullUrl.includes('?') ? '&' : '?'}${key}=${this.currentOtaDetail[key]}`;
-            }
-        });
+      Object.keys(queryParamsForApi).forEach(key => {
+        if (queryParamsForApi[key]) {
+          fullUrl += `${fullUrl.includes('?') ? '&' : '?'}${key}=${this.currentOtaDetail[key]}`;
+        }
+      });
     }
-
+    
     let site_details:any = {
       site_name:this.currentOtaDetail.site_name,
       ota_id:this.currentOtaDetail.ota_id
     }
-
-
+    
+    
     this._service.getPropertyList({site_details,apiUrl:fullUrl,authType:auth},(res:any)=>{
       if(res.status == 200){
+        this.loader=false;
         this.getPropertyListByOTAId();
         this.alert.alert("success",res.message,"Success",{displayDuration:2000,top});
       }else{
+        this.loader=false;
         this.alert.alert("trash",res.message,"Error",{displayDuration:2000,top});
       }
     })
@@ -72,12 +77,18 @@ export class ViewOtaComponent {
     localStorage.setItem("current_ota_detail",JSON.stringify(addedPropertyId));
   }
 
-  toggleDeleteModal(idx:any){
-    
+  toggleDeleteModal(id:any){
+      this.currentPropertyId = id;
+      this.showDeleteModal=true;
+  }
+
+  closeModal(){
+    this.showDeleteModal=false;
+    this.showDetailModal=false;
   }
 
   backToManageOta(){
-    this.router.navigate(['/manage_ota'])
+    this.router.navigate(['/manage_ota']);
   }
 
   showDetail(item:any){
@@ -85,5 +96,18 @@ export class ViewOtaComponent {
     this.propertyDetailsConfig = item;
     console.log(this.propertyDetailsConfig);
     
+  }
+
+
+  deleteProperty(){
+    this._service.deleteProperty({id:this.currentPropertyId},(res:any)=>{
+      if(res.status == 200){
+         this.closeModal();        
+         this.getPropertyListByOTAId();
+         this.alert.alert("success",res.message,"Success",{displayDuration:2000,top});
+        }else{
+          this.alert.alert("trash",res.message,"Error",{displayDuration:2000,top});
+        }
+    })
   }
 }
