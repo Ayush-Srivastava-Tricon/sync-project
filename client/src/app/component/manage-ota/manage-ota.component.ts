@@ -19,12 +19,13 @@ export class ManageOtaComponent {
   otaModal: any;
   isEditModal: boolean = false;
   formData: any = new FormData();
-  currentOtaId: number = 0;
+  currentOtaId: any = 0;
   siteIcon: any = '';
   siteIconFile: any = '';
   commissionValue:any;
 
   siteIconPathBaseUrl: any = environment.baseurl;
+
   constructor(private alert: AlertService, private fb: FormBuilder, private _adminService: AdminService,private router:Router) {
     this.otaModal = this.fb.group(
       {
@@ -64,6 +65,7 @@ export class ManageOtaComponent {
     this.showModal.ota = false;
     this.showModal.delete = false;
     this.isEditModal = false;
+    this.siteIcon = '';
     this.otaModal.reset();
   }
 
@@ -71,11 +73,47 @@ export class ManageOtaComponent {
     this.showActionDropDown[idx] = !this.showActionDropDown[idx];
   }
 
-  editOwnerOpenModal(item: any) {
+  editOtaOpenModal(item: any) {
     this.isEditModal = true;
     this.otaModal.patchValue(item);
+    this.siteIcon = this.siteIconPathBaseUrl + item.site_icon;
     this.showModal.ota = true;
     this.currentOtaId = item.id;
+    this.selectCommissioType({target:{value:item.commissionType}});
+    console.log(item);
+    
+  }
+
+  editOtaDetails(){
+    this.loader = true;
+    if (this.otaModal.status == "VALID") {
+      console.log(this.otaModal.value);
+      
+      const formData = new FormData();
+      formData.append('siteName', this.otaModal.get('site_name').value);
+      formData.append('siteIcon', this.siteIconFile);
+      formData.append('siteEndpoint', this.otaModal.get('site_endpoint').value);
+      formData.append('siteUser', this.otaModal.get('site_user').value);
+      formData.append('sitePass', this.otaModal.get('site_pass').value);
+      formData.append('siteApiKey', this.otaModal.get('site_apiKey').value);
+      formData.append('siteOtherInfo', this.otaModal.get('site_otherInfo').value);
+      formData.append('commission', this.otaModal.get('commission').value);
+      formData.append('commissionType', this.otaModal.get('commissionType').value);
+      formData.append('id', this.currentOtaId);
+
+      this._adminService.editOta(formData, (res: any) => {
+        if (res.status == 200) {
+          console.log(res);
+          this.alert.alert("success", res.message, "Success", { displayDuration: 2000, pos: 'top' });
+          this.loader = false;
+          this.closeModal();
+          this.getOtaList();
+        }
+      })
+    } else{
+      this.alert.alert("trash","Fields cannot be empty","Error",{displayDuration:2000,top});
+      this.loader = false;
+    }
   }
 
 
@@ -83,19 +121,15 @@ export class ManageOtaComponent {
     this.showModal.ota = false;
     this.isEditModal = false;
     this.showActionDropDown = {};
+    this.siteIcon = '';
     this.otaModal.reset();
   }
 
   chooseSiteIcon(event: any) {
     const file: any = event.target.files[0];
-    this.siteIcon = URL.createObjectURL(file);
-    
+      this.siteIcon = URL.createObjectURL(file);
     this.siteIconFile = event.target.files[0];
     
-  }
-
-  editOtaDetails() {
-
   }
 
   addNewOtaDetails() {
@@ -130,8 +164,29 @@ export class ManageOtaComponent {
     }
   }
 
-  toggleDeleteModal(idx:any){
+  toggleDeleteModal(id:any){
+    this.showModal.delete = true;
+    this.currentOtaId = id;
+  }
 
+  deleteOta(){
+    this.loader=true;
+    let params:any={
+      id:this.currentOtaId
+    };
+    this._adminService.deleteOta(params,(res:any)=>{
+      if(res.status == 200){
+        this.alert.alert("success", res.message, "Success", { displayDuration: 2000, pos: 'top' });
+        this.loader=false;
+          this.closeModal();
+          this.getOtaList();
+      }else{
+          this.loader=false;
+          this.closeModal();
+          this.alert.alert("trash","Something went wrong","Error",{displayDuration:2000,top});
+
+        }
+      })
   }
 
   copyApiKey(val:any){

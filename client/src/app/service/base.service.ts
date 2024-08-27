@@ -12,6 +12,8 @@ export class BaseService {
     'SIGNUP':'/signup',
     'USER_LIST':'/getUsers',
     'ADD_OTA':'/addOta',
+    'EDIT_OTA':'/editOta',
+    'DELETE_OTA':'/deleteOta',
     'GET_OTA_LIST':'/getOta',
 
 
