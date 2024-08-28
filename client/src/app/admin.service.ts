@@ -59,7 +59,10 @@ export class AdminService extends BaseService {
 
   fetchCalendarDataByStartEndDate(params:any,callback:any){
     this.postData(params,this.httpUrls['GET_CALENDAR_DATA'],callback)
+  }
 
+  fetchAllCalendarData(callback:any){
+    this.getData({},this.httpUrls['GET_ALL_CALENDAR_DATA'],callback)
   }
 
   checkAvailability(params:any,callback:any){

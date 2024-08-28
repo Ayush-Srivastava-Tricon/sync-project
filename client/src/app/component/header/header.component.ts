@@ -15,7 +15,7 @@ export class HeaderComponent {
   }
 
   ngOnInit(){
-    this.isAdmin = JSON.parse(<any>localStorage.getItem("role")) == 'admin';
+    this.isAdmin = localStorage.getItem("role") == 'admin';
   }
 
   logOut(){

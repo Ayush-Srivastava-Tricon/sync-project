@@ -20,10 +20,12 @@ const routes: Routes = [
   },
   {
     path: "view_calendar/:ota/:property_id/:room_id",
+    pathMatch:'full',
     loadChildren: () => import("./component/calendar/calendar.module").then(m => m.CalendarModule)
   },
   {
     path: "view_calendar",
+    pathMatch:'full',
     loadChildren: () => import("./component/calendar/calendar.module").then(m => m.CalendarModule)
   },
   {

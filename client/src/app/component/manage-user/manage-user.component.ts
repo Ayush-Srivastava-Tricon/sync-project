@@ -16,7 +16,7 @@ export class ManageUserComponent {
     email:'',
     password:'',
     name:'',
-    role:'user'
+    role:''
   };
   currentUserId:any=0;
 
@@ -33,6 +33,11 @@ export class ManageUserComponent {
       if(res.status == 200){
         this.loader=false;
         this.userList = res.data;
+      }else{
+        console.log(23);
+        
+        this.alert.alert("error",res.error.message,"Error",{ displayDuration: 2000, pos: 'top' });
+        this.loader=false;
       }
     })
   }
@@ -47,7 +52,7 @@ export class ManageUserComponent {
         this.backToUser();
         this.loader=false;
       }else{
-        this.alert.alert("error",res.message,"Error",{ displayDuration: 2000, pos: 'top' });
+        this.alert.alert("error",res.error.message,"Error",{ displayDuration: 2000, pos: 'top' });
         this.loader=false;
       }
     })
@@ -80,7 +85,7 @@ export class ManageUserComponent {
     })
   }
 
-  deleteKeeperModal(id:any){
+  deleteUserModal(id:any){
     this.currentUserId = id;
     this.showModal.delete=true;
   }

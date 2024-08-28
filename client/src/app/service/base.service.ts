@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 
@@ -10,7 +10,6 @@ export class BaseService {
   httpUrls:any={
     'LOGIN':'/login',
     'SIGNUP':'/signup',
-    'USER_LIST':'/getUsers',
     'ADD_OTA':'/addOta',
     'EDIT_OTA':'/editOta',
     'DELETE_OTA':'/deleteOta',
@@ -27,6 +26,7 @@ export class BaseService {
     'GET_ROOM_LIST_BY_PROPERTY':'/get_rooms_by_property_and_ota',
     'IMPORT_CALENDAR_DATA':'/import_calendar_data_and_save',
     'GET_CALENDAR_DATA':'/fetch_calendar_data_by_start_end_date',
+    'GET_ALL_CALENDAR_DATA':'/fetch_all_calendar_data',
     'CHECK_AVAILABLITY':'/check_room_availability',
     'GET_RESERVATION_LIST':'/get_reservation_list',
     'GET_BOOKING_LOG_LIST':'/get_booking_log',
@@ -39,13 +39,76 @@ export class BaseService {
 
   constructor(public http:HttpClient) { }
 
+  getTokenFromLocal() {
+    let token = localStorage.getItem("token");
+    return token;
+  }
+
+  handleRefreshToken(callback: any) {
+    let refreshToken: any = localStorage.getItem("refreshToken");
+    let role:any = localStorage.getItem("role");
+    let headers = new HttpHeaders()
+      .set('content-type', 'application/json')
+      .set('Access-Control-Allow-Origin', '*')
+      .set('Authorization', `Bearer ${refreshToken}`)
+
+
+    return this.http.post(environment.url+"/refreshToken",{refreshToken,role},{ headers: headers }).subscribe((data: any) => callback(<any>data));
+
+  }
+
 
   getData(d:any,url:any,callback:any){
-    return this.http.get(environment.url+url).subscribe((data:any)=>callback(<any>data),(error:any)=>callback(error.error));
+    let headers = new HttpHeaders()
+    .set('content-type', 'application/json')
+    .set('Access-Control-Allow-Origin', '*')
+    .set('Authorization', `Bearer ${this.getTokenFromLocal()}`)
+
+    return this.http.get(environment.url+url,{headers}).subscribe((data:any)=>{ callback(data) },
+    (error: any) => {
+      console.log(error)
+      if (error.error.status == 500) {
+        this.handleRefreshToken((res: any) => {
+          if (res.status == 200) {
+            this.setTokenIntoLocal(res.data)
+            this.getData(d, url, callback);
+          }
+        });
+      }
+      if (error) {
+        callback(error);
+      }
+    })
+
   }
 
   postData(d:any,url:any,callback:any){
-    return this.http.post(environment.url+url,d).subscribe((data:any)=>callback(<any>data),(error:any)=>callback(error.error));
+    let headers = new HttpHeaders()
+    .set('content-type', 'application/json')
+    .set('Access-Control-Allow-Origin', '*')
+    .set('Authorization', `Bearer ${this.getTokenFromLocal()}`)
+
+    return this.http.post(environment.url+url,d,{headers}).subscribe((data:any)=>{ callback(data) },
+    (error: any) => {
+      console.log(error)
+      if (error.error.status == 500) {
+        this.handleRefreshToken((res: any) => {
+          if (res.status == 200) {
+            this.setTokenIntoLocal(res.data)
+            this.postData(d, url, callback);
+          }
+        });
+      }
+      if (error) {
+        callback(error);
+      }
+    })
   }
+
+  setTokenIntoLocal(data:any){
+    localStorage.setItem("token",data.token);
+    localStorage.setItem("refreshToken",data.refreshToken);
+    localStorage.setItem("role",data.role);
+}
   
 }

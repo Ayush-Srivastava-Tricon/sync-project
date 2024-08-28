@@ -6,6 +6,7 @@ const path = require('path');
 const fs = require('fs');
 const axios = require("axios");
 const apiMappings = require("../routes/apiMapping.js");
+const { validateToken } = require("../middleware/middleware.js");
 
 // ******Setting OTA Icon file directory inside route folder**********
 
@@ -29,7 +30,7 @@ const upload = multer({ storage });
 
 // **********Api to add OTA details with site icon *******
 
-router.post('/addOta', upload.single('siteIcon'), (req, res) => {
+router.post('/addOta', validateToken, upload.single('siteIcon'), (req, res) => {
     const { siteName, siteEndpoint, siteUser, sitePass, siteApiKey, siteOtherInfo, commission, commissionType } = req.body;
     const siteIconPath = req.file ? '/uploads/' + req.file.filename : null;
 
@@ -47,9 +48,9 @@ router.post('/addOta', upload.single('siteIcon'), (req, res) => {
 
 // **********Api to Edit OTA details with site icon *******
 
-router.post('/editOta',  upload.single('siteIcon'),(req, res) => {
+router.post('/editOta', validateToken, upload.single('siteIcon'), (req, res) => {
     const { siteName, siteEndpoint, siteUser, sitePass, siteApiKey, siteOtherInfo, commission, commissionType, id } = req.body;
-    const siteIconPath =  req.file ? '/uploads/' + req.file.filename : null;
+    const siteIconPath = req.file ? '/uploads/' + req.file.filename : null;
 
     const sql = `
     UPDATE ota
@@ -65,7 +66,7 @@ router.post('/editOta',  upload.single('siteIcon'),(req, res) => {
       commissionType = ?
     WHERE id = ?`;
 
-    const values = [siteName, siteIconPath, siteEndpoint, siteUser, sitePass, siteApiKey, siteOtherInfo, commission, commissionType,id];
+    const values = [siteName, siteIconPath, siteEndpoint, siteUser, sitePass, siteApiKey, siteOtherInfo, commission, commissionType, id];
 
     connection.query(sql, values, (err, result) => {
         if (err) {
@@ -78,7 +79,7 @@ router.post('/editOta',  upload.single('siteIcon'),(req, res) => {
 
 // **********Api to Delete OTA details with site icon *******
 
-router.post('/deleteOta',(req, res) => {
+router.post('/deleteOta', validateToken, (req, res) => {
     const { id } = req.body;
 
     const sql = `DELETE FROM ota WHERE id = ?`;
@@ -96,7 +97,7 @@ router.post('/deleteOta',(req, res) => {
 
 // **********Fetching All OTA LIST *******
 
-router.get('/getOta', upload.single('siteIcon'), (req, res) => {
+router.get('/getOta', validateToken, (req, res) => {
     const sql = 'SELECT * FROM ota';
 
     connection.query(sql, (err, result) => {
@@ -111,7 +112,7 @@ router.get('/getOta', upload.single('siteIcon'), (req, res) => {
 
 // **********Fetching Hotel/Property List from Third Party OTA and saving into DB *******
 
-router.post('/get_property_list_and_save', async (req, res) => {
+router.post('/get_property_list_and_save', validateToken, async (req, res) => {
     const { site_details, apiUrl, authType } = req.body;
 
     const headers = {};
@@ -185,7 +186,7 @@ async function insertProperty(apiSource, apiProperty, ota_id) {
 
 //***********FETCH HOTEL/PROPERTY LIST FROM DB*******
 
-router.get("/get_property_list", async (req, res) => {
+router.get("/get_property_list", validateToken, async (req, res) => {
     try {
         const sql = 'SELECT * FROM properties';
         connection.query(sql, (err, result) => {
@@ -204,7 +205,7 @@ router.get("/get_property_list", async (req, res) => {
 
 //***********FETCH HOTEL/PROPERTY LIST BY OTA FROM DB*********
 
-router.post("/get_property_by_ota", async (req, res) => {
+router.post("/get_property_by_ota", validateToken, async (req, res) => {
     try {
         const sql = 'SELECT * FROM properties WHERE ota_id = ?';
         const values = [req.body.ota_id];
@@ -225,9 +226,9 @@ router.post("/get_property_by_ota", async (req, res) => {
 
 //***********DELETE HOTEL/PROPERTY*********
 
-router.post("/delete_property", async (req, res) => {
+router.post("/delete_property", validateToken, async (req, res) => {
     try {
-        const {id} = req.body;
+        const { id } = req.body;
         const sql = `DELETE FROM properties WHERE property_id = ?`;
         const values = [id];
         connection.query(sql, values, (err, result) => {
@@ -248,7 +249,7 @@ router.post("/delete_property", async (req, res) => {
 
 //***********FETCH ROOM LIST FROM THIRD PARTY OTA AND SAVE INTO DB*********
 
-router.post("/get_room_list_and_save", async (req, res) => {
+router.post("/get_room_list_and_save", validateToken, async (req, res) => {
     const { site_details, apiUrl, authType } = req.body;
 
     const headers = {};
@@ -261,13 +262,21 @@ router.post("/get_room_list_and_save", async (req, res) => {
         const response = await axios.get(apiUrl, { headers });
         const properties = response.data.properties;
 
+        
+        
         const property = properties.find(p => p.property_id == site_details.property_id);
+        // console.log(properties[0].rates);
+
+
+       
 
         const accommodations = [];
+
 
         property.rates.forEach(rate => {
             if (rate.accommodations) {
                 rate.accommodations.forEach(room => {
+                    insertRates(rate,room);
                     accommodations.push({
                         room_id: room.accom_id,
                         name: room.name,
@@ -301,6 +310,22 @@ router.post("/get_room_list_and_save", async (req, res) => {
     }
 });
 
+async function insertRates(rate,room){
+    const rateQuery = "INSERT INTO rates (rate_id, room_id, board_code, rate_plan_id, allotment, price) VALUES (?, ?, ?, ?, ?, ?)";
+    const values = [rate.rate_id, room.accom_id, rate.name, rate.rate_id, rate.allotment || 5 , rate.price || 0 ];                     //allotment and price is not present in current ota api.
+    console.log(values);
+    
+    connection.query(rateQuery, values, (err, result) => {
+        if (!err) {
+            return true;
+        }else{
+            console.log(err);
+            return false;
+        }
+    });
+
+}
+
 //***********METHOD WILL INSERT ROOM LIST INTO DB*********
 
 async function insertRooms(room, ota_id, property_id) {
@@ -327,7 +352,7 @@ async function insertRooms(room, ota_id, property_id) {
 
 //**********FETCH ROOM LIST BY OTA ID AND HOTEL/PROPERTY ID *********
 
-router.post("/get_rooms_by_property_and_ota", async (req, res) => {
+router.post("/get_rooms_by_property_and_ota", validateToken, async (req, res) => {
     const { ota_id, property_id } = req.body;
     try {
         const query = `SELECT * FROM rooms WHERE ota_id = ${ota_id} AND property_id = ${property_id}`;
@@ -346,9 +371,9 @@ router.post("/get_rooms_by_property_and_ota", async (req, res) => {
 
 //**********DELETE ROOM *********
 
-router.post("/delete_room", async (req, res) => {
+router.post("/delete_room", validateToken, async (req, res) => {
     try {
-        const {id} = req.body;
+        const { id } = req.body;
         const sql = `DELETE FROM rooms WHERE room_id = ?`;
         const values = [id];
         connection.query(sql, values, (err, result) => {
@@ -389,7 +414,7 @@ function transformPropertyData(apiSource, apiProperty) {
 
 //***************FETCH CALENDAR LIST FROM THRID PARTY OTA AND SAVE INTO DB****** */
 
-router.post('/import_calendar_data_and_save', async (req, res) => {
+router.post('/import_calendar_data_and_save', validateToken, async (req, res) => {
     try {
         const { site_details, authType, apiUrl } = req.body;
         await importAndSaveData(site_details, authType, apiUrl);
@@ -475,7 +500,7 @@ const fetchCalendarData = async (from, till, authType, apiUrl) => {
 };
 
 const saveDataToDatabase = async (data, site_details) => {
-    console.log("SAVE TP DADTABSE0");
+    console.log(site_details);
     const query = `INSERT INTO calendar 
     (room_id, rate_id, start_date, available, rate, min, max, ota_id, property_id, room_name) 
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
@@ -517,7 +542,7 @@ const saveDataToDatabase = async (data, site_details) => {
                 site_details.room_id,
                 site_details.rate_id,
                 item.date,
-                item.available || 5,
+                item.available || 5,   //5 will be remove if available
                 item.rate = commissionResult[0].commissionType == 'fixed' ? (+item.rate + +commissionResult[0].commission) : (+item.rate + getCalculatedRoomRate(item.rate, commissionResult[0].commission)),
                 item.minlos,
                 item.maxlos,
@@ -541,7 +566,7 @@ function getCalculatedRoomRate(rate, commission) {
 // *****************FETCH DATA FROM CALENDAR BY START DATE AND END DATE (from and till)*****
 
 
-router.post("/fetch_calendar_data_by_start_end_date", async (req, res) => {
+router.post("/fetch_calendar_data_by_start_end_date", validateToken, async (req, res) => {
     try {
 
         const { start_date, room_id, ota_id, property_id, end_date } = req.body;
@@ -564,7 +589,7 @@ router.post("/fetch_calendar_data_by_start_end_date", async (req, res) => {
                            AND start_date >= ? 
                            AND start_date < DATE_ADD(?, INTERVAL 1 MONTH)`;
             values = [ota_id, property_id, room_id, start_date, start_date];
-        }
+        };
 
         connection.query(query, values, (error, results) => {
             if (error) {
@@ -585,6 +610,35 @@ router.post("/fetch_calendar_data_by_start_end_date", async (req, res) => {
 });
 
 
+//***********FETCH ALL CALENDAR DATA */
+
+router.get("/fetch_all_calendar_data", validateToken, (req, res) => {
+    const query = `SELECT * FROM calendar`;
+    connection.query(query, (err, results) => {
+        if (!err) {
+            const obj = {};
+            results.forEach((ele) => {
+                const { room_id, room_name } = ele;
+                if (!obj[room_id]) {
+                    obj[room_id] = {
+                        room_id,
+                        room_name,
+                        data: []
+                    };
+                }
+                obj[room_id].data.push(ele);
+            });
+
+            const data = Object.values(obj);
+            res.status(200).send({ message: "Data found", data: data, status: 200 });
+        } else {
+            res.status(400).send({ message: err.sqlMessage, status: 400 });
+        }
+    })
+})
+
+
+
 //***********METHOD WILL FORMAT DATE INTO YYYY-MM-DD */
 
 function formatDate(date) {
@@ -600,6 +654,5 @@ function formatDate(date) {
 
     return [year, month, day].join('-');
 }
-
 
 module.exports = router;

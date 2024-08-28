@@ -21,18 +21,6 @@ export class CalendarComponent {
   hotelPrice: any = [];
   hotelRooms: any = [];
   todayDate: any = new Date();
-  // showModalConfig: any = {
-  //   "all_data": {
-  //     "pr": "",
-  //     "ss": "",
-  //     "mn": "",
-  //     "mx": "",
-  //     "cta": "",
-  //     "ctd": "",
-  //     "cu": "",
-  //     "al": "",
-  //   }
-  // };  
   showAdvanceSection: boolean = false;
   selectDate: any = '';
   errorMsg: any = '';
@@ -52,8 +40,10 @@ export class CalendarComponent {
   isDeriveModalActive: boolean = false;
   timeZoneAndStartDate: any = {};
   currentOtaDetails: any;
+  directCalendarAccess:any=false;
 
-  constructor(private fb: FormBuilder, private alert: AlertService, public constant: AppConstants, private _service: AdminService,private router:Router) {
+
+  constructor(private fb: FormBuilder, private alert: AlertService, public constant: AppConstants, private _service: AdminService, private router: Router) {
     this.modalFieldForm = this.fb.group({
       "pr": ['', [Validators.pattern(/^\d*\.?\d*$/)]],
       "ss": ['',],
@@ -71,14 +61,17 @@ export class CalendarComponent {
   }
 
   ngOnInit(): void {
-
-
+    if(this.router.url.split("/")?.length == 5) this.directCalendarAccess=true;
     let myloacalData: any = localStorage.getItem('current_ota_detail');
     this.currentOtaDetails = JSON.parse(myloacalData);
-    this.fetchData();
+    if (this.currentOtaDetails && this.directCalendarAccess) {
+      this.fetchDataByOtaDetails();
+    } else {
+      this.fetchAllCalendarData();
+    }
   }
 
-  fetchData() {
+  fetchDataByOtaDetails() {
     let params: any = {
       start_date: this.currentOtaDetails.from,
       room_id: this.currentOtaDetails.room_id,
@@ -90,6 +83,17 @@ export class CalendarComponent {
       if (res.status == 200) {
         this.selectedDate({ target: { value: this.formatDate(this.todayDate) } });
         this.mainData = res.data;
+      }
+    })
+  }
+
+  fetchAllCalendarData() {
+    this._service.fetchAllCalendarData((res: any) => {
+      if (res.status == 200) {
+        this.selectedDate({ target: { value: this.formatDate(this.todayDate) } });
+        this.mainData = res.data;
+        console.log(this.mainData);
+
       }
     })
   }
@@ -256,18 +260,28 @@ export class CalendarComponent {
     this.currentDate = new Date(this.currentDate);
     this.currentDate.setMonth(this.currentDate.getMonth() - 1);
     this.datesData = [];
-    if ((this.currentDate.getMonth() + 1) != (new Date().getMonth() + 1)) {
+    if(this.currentDate.getFullYear() == new Date().getFullYear()){
+
+      if ((this.currentDate.getMonth() + 1) != (new Date().getMonth() + 1)) {
+        this.selectDate = '';
+        let selectedRangeDate: any = document.getElementById("date");
+        let setFirstMonthDate: any = new Date(this.currentDate).setDate(1);
+        selectedRangeDate.value = this.formatDate(new Date(setFirstMonthDate));
+        let now: any = new Date(setFirstMonthDate);
+        this.selectedDate({ target: { value: this.formatDate(now) } });
+      } else {
+        this.selectDate = new Date();
+        let selectedRangeDate: any = document.getElementById("date");
+        selectedRangeDate.value = this.formatDate(this.selectDate);
+        this.selectedDate({ target: { value: this.formatDate(this.selectDate) } });
+      }
+    }else{
       this.selectDate = '';
-      let selectedRangeDate: any = document.getElementById("date");
-      let setFirstMonthDate: any = new Date(this.currentDate).setDate(1);
-      selectedRangeDate.value = this.formatDate(new Date(setFirstMonthDate));
-      let now :any = new Date(setFirstMonthDate);
-      this.selectedDate({ target: { value: this.formatDate(now) }});
-    } else {
-      this.selectDate = new Date();
-      let selectedRangeDate: any = document.getElementById("date");
-      selectedRangeDate.value = this.formatDate(this.selectDate);
-      this.selectedDate({ target: { value: this.formatDate(this.selectDate) }});
+        let selectedRangeDate: any = document.getElementById("date");
+        let setFirstMonthDate: any = new Date(this.currentDate).setDate(1);
+        selectedRangeDate.value = this.formatDate(new Date(setFirstMonthDate));
+        let now: any = new Date(setFirstMonthDate);
+        this.selectedDate({ target: { value: this.formatDate(now) } });
     }
   }
 
@@ -275,19 +289,32 @@ export class CalendarComponent {
     this.currentDate = new Date(this.currentDate);
     this.currentDate.setMonth(this.currentDate.getMonth() + 1);
     this.datesData = [];
-    if ((this.currentDate.getMonth() + 1) != (new Date().getMonth() + 1)) {
-      this.selectDate = '';
-      let selectedRangeDate: any = document.getElementById("date");
-      let setFirstMonthDate: any = new Date(this.currentDate).setDate(1)
-      selectedRangeDate.value = this.formatDate(new Date(setFirstMonthDate));
-      let now :any = new Date(setFirstMonthDate);
-      this.selectedDate({ target: { value: this.formatDate(now) }});
-    } else {
-      this.selectDate = new Date();
-      let selectedRangeDate: any = document.getElementById("date");
-      selectedRangeDate.value = this.formatDate(this.selectDate);
-      this.selectedDate({ target: { value: this.formatDate(this.selectDate) }});
-    }
+    if(this.currentDate.getFullYear() == new Date().getFullYear()){
+      if ((this.currentDate.getMonth() + 1) != (new Date().getMonth() + 1)) {
+        this.selectDate = '';
+        let selectedRangeDate: any = document.getElementById("date");
+        let setFirstMonthDate: any = new Date(this.currentDate).setDate(1)
+        selectedRangeDate.value = this.formatDate(new Date(setFirstMonthDate));
+        let now: any = new Date(setFirstMonthDate);
+        this.selectedDate({ target: { value: this.formatDate(now) } });
+      } else {
+        this.selectDate = new Date();
+        let selectedRangeDate: any = document.getElementById("date");
+        selectedRangeDate.value = this.formatDate(this.selectDate);
+        this.selectedDate({ target: { value: this.formatDate(this.selectDate) } });
+      }
+    }else{
+        this.selectDate = '';
+        let selectedRangeDate: any = document.getElementById("date");
+        let setFirstMonthDate: any = new Date(this.currentDate).setDate(1)
+        selectedRangeDate.value = this.formatDate(new Date(setFirstMonthDate));
+        let now: any = new Date(setFirstMonthDate);
+        this.selectedDate({ target: { value: this.formatDate(now) } });
+      }
+  }
+
+  isSameMonthAndYear() {
+   return true;
   }
 
 
@@ -306,25 +333,6 @@ export class CalendarComponent {
   }
 
   makeCalendarData() {
-    // this.mainData=[
-    //   {
-    //     room_id:1,
-    //     room_name:"Wonder Full",
-    //     data:[
-    //       {
-    //         date:"2024-07-30",
-    //         "accom_id": 38651,
-    //         "available": 4,
-    //         "rate": "238.5",
-    //         "breakdown": [
-    //             "238.5"
-    //         ],
-    //         "minlos": 1,
-    //         "maxlos": 5
-    //       }
-    //     ] 
-    //   }
-    // ]
     this.mainData.forEach((e: any) => {
       e.data.forEach((item: any) => {
         for (let i = 0; i < this.datesData.length; i++) {
@@ -339,10 +347,6 @@ export class CalendarComponent {
       e['datesData'] = JSON.parse(JSON.stringify(this.datesData));
     });
     this.loader = false;
-
-    console.log(this.mainData);
-
-
   }
 
   closeModal() {
@@ -537,7 +541,7 @@ export class CalendarComponent {
 
     this._service.importCalendarData({ site_details: this.currentOtaDetails, apiUrl: fullUrl, authType: auth }, (res: any) => {
       if (res.status == 200) {
-        this.fetchData();
+        this.fetchDataByOtaDetails();
         this.loader = false;
         this.alert.alert("success", res.message, "Success", { displayDuration: 2000, top });
       } else {
@@ -549,8 +553,8 @@ export class CalendarComponent {
 
   }
 
-  backToViewRoom(){
-    this.router.navigate(['view_room',this.currentOtaDetails.room_id])
+  backToViewRoom() {
+    this.router.navigate(['view_room', this.currentOtaDetails.room_id])
   }
 
 

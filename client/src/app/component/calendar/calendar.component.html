@@ -10,7 +10,7 @@
       </ol>
     </nav>
   </div>
-  <div class="row mb-5 header py-2 justify-content-between">
+  <div class="row mb-5 header py-2 justify-content-between" *ngIf="mainData?.length>0">
     <div class="col-sm-3">
       <div class="d-flex">
         <div class="d-block border-top text-light rounded shadow btn-success import-btn p-2">Date Range</div>
@@ -18,7 +18,7 @@
           (change)="selectedDate($event)">
       </div>
     </div>
-    <div class="col-sm-6 text-end">
+    <div class="col-sm-6 text-end" *ngIf="directCalendarAccess">
       <button class="btn btn-success border-0 import-btn" [disabled]="loader"
         (click)="importPriceAndAvailability('GET_CALENDAR_DATA')">
         Import Price And Availability
@@ -101,17 +101,17 @@
                     <ng-container *ngFor="let dayData of data.datesData;let dataIdx = index;">
                       <td *ngIf="id == 0" class="hover-td"
                         [ngClass]="{'disabled':dayData.isDatePassed,'available':dayData?.newData?.available ,'text-light':dayData?.newData?.available , 'bg-danger': !(dayData?.newData?.available) || dayData?.newData?.available == 0 ,'active':dragEl['head'+dataIdx+calendarIdx] }"
-                        (click)="handleClickEvent(dayData.formateDate,dayData?.newData,data.room_name,data.room_id,false);dragEl['head'+dataIdx+calendarIdx+id]=true;">
+                        >
                         {{dayData?.newData?.available || 0 }}
                       </td>
                       <td *ngIf="id == 1" class="hover-td"
                         [ngClass]="{'disabled':dayData.isDatePassed,'active':dragEl['head'+dataIdx+calendarIdx]}"
-                        (click)="handleClickEvent(dayData.formateDate,dayData?.newData,data.room_name,data.room_id,false);dragEl['head'+dataIdx+calendarIdx]=true;">
+                        >
                         {{dayData?.newData?.min }} - {{dayData?.newData?.max }}
                       </td>
                       <td *ngIf="id == 2" class="hover-td"
                         [ngClass]="{'disabled':dayData.isDatePassed,'active':dragEl['head'+dataIdx+calendarIdx]}"
-                        (click)="handleClickEvent(dayData.formateDate,dayData?.newData,data.room_name,data.room_id,false);dragEl['head'+dataIdx+calendarIdx]=true;">
+                        >
                         <i class="bi bi-box-arrow-in-right text-danger mx-1 " style="font-size: 20px;"
                           *ngIf="dayData?.newData?.cta"></i>
                         <i class="bi bi-box-arrow-right text-danger mx-1 " style="font-size: 20px;"
@@ -119,7 +119,7 @@
                       </td>
                       <td *ngIf="id == 3" class="hover-td"
                         [ngClass]="{'disabled':dayData.isDatePassed,'bg-danger':dayData?.newData?.ss == 'true'|| dayData?.newData?.ss == '1','active':dragEl['head'+dataIdx+calendarIdx],'text-light':dayData?.newData?.ss == 'true'|| dayData?.newData?.ss == '1'}"
-                        (click)="handleClickEvent(dayData.formateDate,dayData?.newData,data.room_name,data.room_id,false);dragEl['head'+dataIdx+calendarIdx]=true;">
+                        >
                         {{dayData?.newData?.rate ? dayData?.newData?.rate + ".00" : '0'}}
                       </td>
                     </ng-container>
