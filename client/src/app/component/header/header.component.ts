@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { AdminService } from 'src/app/admin.service';
+import { AlertService } from 'src/app/shared/alert.service';
 
 @Component({
   selector: 'app-header',
@@ -10,7 +12,7 @@ export class HeaderComponent {
 
   isAdmin:boolean=false;
 
-  constructor(private _service:AdminService){
+  constructor(private alert:AlertService,private router: Router){
     
   }
 
@@ -20,6 +22,7 @@ export class HeaderComponent {
 
   logOut(){
     localStorage.clear();
-    window.location.href = "/";
+    this.router.navigateByUrl('/login');
+    this.alert.alert("trash","Logged Out","Success",{displayDuration:2000,pos: 'top'});
   }
 }

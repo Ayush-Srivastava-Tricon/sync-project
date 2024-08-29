@@ -83,6 +83,8 @@ export class CalendarComponent {
       if (res.status == 200) {
         this.selectedDate({ target: { value: this.formatDate(this.todayDate) } });
         this.mainData = res.data;
+      }else{
+
       }
     })
   }
@@ -546,7 +548,7 @@ export class CalendarComponent {
         this.alert.alert("success", res.message, "Success", { displayDuration: 2000, top });
       } else {
         this.loader = false;
-        this.alert.alert("trash", res.message, "Error", { displayDuration: 2000, top });
+        this.alert.alert("trash", res.error.message, "Error", { displayDuration: 2000, top });
       }
     })
 

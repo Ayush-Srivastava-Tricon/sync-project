@@ -53,7 +53,7 @@ function validateBingTripToken(req, res, next) {
             if (err.message.includes("invalid")) {
                 res.status(401).send({ message: "Invalid Token", status: 401 });
             } else {
-                res.status(500).send({ message: "Token Expired", status: 500 });
+                res.status(498).send({ message: "Token Expired", status: 498 });
             }
         }
     } else {

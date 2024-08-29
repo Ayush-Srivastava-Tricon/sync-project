@@ -11,6 +11,10 @@ export class AuthService extends BaseService {
     super(http);
   }
 
+  isUserAuthenticated(){
+    return !!localStorage.getItem("isLoggedIn");
+  }
+
   login(param:any,callback:any){
     this.postData(param,this.httpUrls['LOGIN'],callback);
   }

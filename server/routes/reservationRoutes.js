@@ -3,7 +3,7 @@ const router = express.Router();
 const axios = require("axios");
 const connection = require("../config/db.js");
 const otaConfig = require("./otaConstant.js");
-const {validateBingTripToken} = require("../middleware/middleware.js");
+const {validateBingTripToken, validateAdminToken} = require("../middleware/middleware.js");
 
 // ***************CHECK HOTEL AVAILABILITY ************
 
@@ -310,7 +310,7 @@ async function entryIntoBookingLog(response, requestBody, orderStatus, remark) {
 // ************FETCH RESERVATION/BOOKING LIST FROM DB********
 
 
-router.get("/get_reservation_list", validateBingTripToken, async (req, res) => {
+router.get("/get_reservation_list", validateAdminToken, async (req, res) => {
     try {
 
         const query = `SELECT * from bookings`;
@@ -337,7 +337,7 @@ router.get("/get_reservation_list", validateBingTripToken, async (req, res) => {
 // ************FETCH BOOKING LOG LIST FROM DB********
 
 
-router.get("/get_booking_log", validateBingTripToken, async (req, res) => {
+router.get("/get_booking_log", validateAdminToken, async (req, res) => {
     try {
         const query = `SELECT * from booking_logs`;
         connection.query(query, (err, result) => {

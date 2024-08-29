@@ -91,7 +91,7 @@ export class BaseService {
     return this.http.post(environment.url+url,d,{headers}).subscribe((data:any)=>{ callback(data) },
     (error: any) => {
       console.log(error)
-      if (error.error.status == 500) {
+      if (error.error.status == 498) {
         this.handleRefreshToken((res: any) => {
           if (res.status == 200) {
             this.setTokenIntoLocal(res.data)

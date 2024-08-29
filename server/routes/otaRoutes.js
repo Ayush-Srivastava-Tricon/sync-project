@@ -262,16 +262,9 @@ router.post("/get_room_list_and_save", validateToken, async (req, res) => {
         const response = await axios.get(apiUrl, { headers });
         const properties = response.data.properties;
 
-        
-        
         const property = properties.find(p => p.property_id == site_details.property_id);
-        // console.log(properties[0].rates);
-
-
-       
 
         const accommodations = [];
-
 
         property.rates.forEach(rate => {
             if (rate.accommodations) {
@@ -310,10 +303,11 @@ router.post("/get_room_list_and_save", validateToken, async (req, res) => {
     }
 });
 
+//***********METHOD WILL INSERT RATES LIST INTO DB*********
+
 async function insertRates(rate,room){
     const rateQuery = "INSERT INTO rates (rate_id, room_id, board_code, rate_plan_id, allotment, price) VALUES (?, ?, ?, ?, ?, ?)";
     const values = [rate.rate_id, room.accom_id, rate.name, rate.rate_id, rate.allotment || 5 , rate.price || 0 ];                     //allotment and price is not present in current ota api.
-    console.log(values);
     
     connection.query(rateQuery, values, (err, result) => {
         if (!err) {
@@ -412,17 +406,39 @@ function transformPropertyData(apiSource, apiProperty) {
     return transformedProperty;
 }
 
+
+//***************TRUCATING CALENDAR DATA FROM TABLE ****** */
+
+async function deleteCalendarData(site_details) {
+    const deleteQuery = `DELETE FROM calendar WHERE ota_id = ? AND property_id = ? AND room_id = ?`;
+    const deleteValue = [site_details.ota_id, site_details.property_id, site_details.room_id];
+
+    return new Promise((resolve, reject) => {
+        connection.query(deleteQuery, deleteValue, (error, results) => {
+            if (error) {
+                reject(error);
+                console.log(error);
+            } else {
+                resolve(results);
+            }
+        });
+    });
+};
+
+
 //***************FETCH CALENDAR LIST FROM THRID PARTY OTA AND SAVE INTO DB****** */
 
 router.post('/import_calendar_data_and_save', validateToken, async (req, res) => {
     try {
         const { site_details, authType, apiUrl } = req.body;
+        await deleteCalendarData(site_details);
         await importAndSaveData(site_details, authType, apiUrl);
         res.send({ message: 'Data fetched and saved successfully', status: 200 });
     } catch (error) {
-        res.status(500).send('Error fetching data df sdf');
+        res.status(500).send({ message: 'Error fetching data', status: 500 });
     }
 });
+
 
 //***************METHOD WILL INSERT DATA INTO DB****** */
 
@@ -481,7 +497,8 @@ const getDateRanges = (startDate) => {
         }
     }
 
-
+    console.log(ranges);
+    
     return ranges;
 };
 
@@ -500,7 +517,6 @@ const fetchCalendarData = async (from, till, authType, apiUrl) => {
 };
 
 const saveDataToDatabase = async (data, site_details) => {
-    console.log(site_details);
     const query = `INSERT INTO calendar 
     (room_id, rate_id, start_date, available, rate, min, max, ota_id, property_id, room_name) 
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
@@ -508,7 +524,8 @@ const saveDataToDatabase = async (data, site_details) => {
     const commissionQuery = `SELECT commission, commissionType FROM ota WHERE id = ?`;
     const commissionValue = [site_details.ota_id];
 
-
+  
+    
     const commission = (query, values) => {
         return new Promise((resolve, reject) => {
             connection.query(query, values, (error, results) => {
@@ -523,6 +540,8 @@ const saveDataToDatabase = async (data, site_details) => {
     };
 
     const commissionResult = await commission(commissionQuery, commissionValue);
+
+    
 
     const queryAsync = (query, values) => {
         return new Promise((resolve, reject) => {
@@ -558,6 +577,8 @@ const saveDataToDatabase = async (data, site_details) => {
     }
 };
 
+// *****************METHOD WILL CALCULATE AND RETURN PRICE/RATE OF THE ROOM ACCORDING TO COMMISSION ADJUSTED*****
+
 function getCalculatedRoomRate(rate, commission) {
     return +((commission / 100) * rate).toFixed(2);
 }
@@ -569,27 +590,16 @@ function getCalculatedRoomRate(rate, commission) {
 router.post("/fetch_calendar_data_by_start_end_date", validateToken, async (req, res) => {
     try {
 
-        const { start_date, room_id, ota_id, property_id, end_date } = req.body;
+        const { start_date, room_id, ota_id, property_id } = req.body;
+       
+            query = `SELECT * 
+                         FROM calendar
+                         WHERE ota_id = ? 
+                           AND property_id = ? 
+                           AND room_id = ? 
+                           AND start_date >= ?`;
 
-        if (end_date) {
-            query = `SELECT * 
-                         FROM calendar
-                         WHERE ota_id = ? 
-                           AND property_id = ? 
-                           AND room_id = ? 
-                           AND start_date >= ? 
-                           AND start_date <= ?`;
-            values = [ota_id, property_id, room_id, start_date, end_date];
-        } else {
-            query = `SELECT * 
-                         FROM calendar
-                         WHERE ota_id = ? 
-                           AND property_id = ? 
-                           AND room_id = ? 
-                           AND start_date >= ? 
-                           AND start_date < DATE_ADD(?, INTERVAL 1 MONTH)`;
-            values = [ota_id, property_id, room_id, start_date, start_date];
-        };
+            values = [ota_id, property_id, room_id, start_date];
 
         connection.query(query, values, (error, results) => {
             if (error) {

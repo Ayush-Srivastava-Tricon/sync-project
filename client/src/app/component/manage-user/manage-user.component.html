@@ -19,6 +19,7 @@
                         <tr class="table-row-rooms">
                             <th>Name</th>
                             <th>Email</th>
+                            <th>Role</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -27,15 +28,17 @@
                             <td class="tg-cly1"></td>
                             <td class="tg-cly1"></td>
                             <td class="tg-cly1"></td>
+                            <td class="tg-cly1"></td>
                         </tr>
                         <tr *ngIf="userList.length==0 && !loader">
-                            <td colspan="3" class="text-center">
+                            <td colspan="4" class="text-center">
                                 No Data
                             </td>
                         </tr>
                         <tr *ngFor="let item of userList;let idx = index;" class="text-center align-middle">
                             <td>{{item.name}}</td>
                             <td>{{item.email}}</td>
+                            <td>{{item.role}}</td>
                             <td>
                                 <div class="d-flex">
                                     <button type="button" class="btn btn-primary btn-sm" (click)="editKeeperOpenModal(item)">
