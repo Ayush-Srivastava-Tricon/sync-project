@@ -64,7 +64,7 @@ export class ViewRoomComponent {
         this.alert.alert("success", res.message, "Success", { displayDuration: 2000, top });
       } else {
         this.loader = false;
-        this.alert.alert("trash", res.message, "Error", { displayDuration: 2000, top });
+        this.alert.alert("trash", res.error ? res.error.message : res.message, "Error", { displayDuration: 2000, top });
       }
     })
   }
@@ -121,7 +121,7 @@ export class ViewRoomComponent {
          this.getRoomListByOtaAndProperty();
          this.alert.alert("success",res.message,"Success",{displayDuration:2000,top});
         }else{
-          this.alert.alert("trash",res.message,"Error",{displayDuration:2000,top});
+          this.alert.alert("trash",res.error ? res.error.message : res.message,"Error",{displayDuration:2000,top});
         }
     })
   }

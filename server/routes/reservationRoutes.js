@@ -302,7 +302,6 @@ async function entryIntoBookingLog(response, requestBody, orderStatus, remark) {
             throw err;
             return;
         }
-
     })
 }
 

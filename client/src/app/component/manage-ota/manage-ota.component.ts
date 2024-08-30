@@ -30,7 +30,7 @@ export class ManageOtaComponent {
     this.otaModal = this.fb.group(
       {
         site_name: ['', Validators.required],
-        site_icon: [''],
+        site_icon: ['',Validators.required],
         site_endpoint: ['', Validators.required],
         site_user: ['', Validators.required],
         site_pass: ['', Validators.required],
@@ -66,6 +66,7 @@ export class ManageOtaComponent {
     this.showModal.delete = false;
     this.isEditModal = false;
     this.siteIcon = '';
+    this.siteIconFile='';
     this.otaModal.reset();
   }
 
@@ -77,6 +78,7 @@ export class ManageOtaComponent {
     this.isEditModal = true;
     this.otaModal.patchValue(item);
     this.siteIcon = this.siteIconPathBaseUrl + item.site_icon;
+    this.siteIconFile = item.site_icon;
     this.showModal.ota = true;
     this.currentOtaId = item.id;
     this.selectCommissioType({target:{value:item.commissionType}});
@@ -87,11 +89,10 @@ export class ManageOtaComponent {
   editOtaDetails(){
     this.loader = true;
     if (this.otaModal.status == "VALID") {
-      console.log(this.otaModal.value);
       
       const formData = new FormData();
       formData.append('siteName', this.otaModal.get('site_name').value);
-      formData.append('siteIcon', this.siteIconFile);
+      formData.append('siteIcon', this.siteIconFile ? this.siteIconFile : this.otaModal.get('site_icon').value);
       formData.append('siteEndpoint', this.otaModal.get('site_endpoint').value);
       formData.append('siteUser', this.otaModal.get('site_user').value);
       formData.append('sitePass', this.otaModal.get('site_pass').value);
@@ -122,13 +123,15 @@ export class ManageOtaComponent {
     this.isEditModal = false;
     this.showActionDropDown = {};
     this.siteIcon = '';
+    this.siteIconFile = '';
     this.otaModal.reset();
   }
 
   chooseSiteIcon(event: any) {
     const file: any = event.target.files[0];
-      this.siteIcon = URL.createObjectURL(file);
+    this.siteIcon = URL.createObjectURL(file);
     this.siteIconFile = event.target.files[0];
+    this.otaModal.controls['site_icon'].setValue(this.siteIconFile);
     
   }
 
@@ -136,7 +139,6 @@ export class ManageOtaComponent {
     this.loader = true;
     console.log(this.otaModal.value);
     if (this.otaModal.status == "VALID") {
-      console.log(this.otaModal.value);
       
       const formData = new FormData();
       formData.append('siteName', this.otaModal.get('site_name').value);

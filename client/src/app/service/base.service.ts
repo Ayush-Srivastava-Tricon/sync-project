@@ -85,8 +85,16 @@ export class BaseService {
   postData(d:any,url:any,callback:any){
     let headers = new HttpHeaders()
     .set('content-type', 'application/json')
+    .set('content-type', 'multipart/form-data')
     .set('Access-Control-Allow-Origin', '*')
-    .set('Authorization', `Bearer ${this.getTokenFromLocal()}`)
+    .set('Authorization', `Bearer ${this.getTokenFromLocal()}`);
+
+    if (d instanceof FormData) {
+      // FormData does not need Content-Type header
+      headers = headers.delete('Content-Type');
+  } else {
+      headers = headers.set('Content-Type', 'application/json');
+  }
 
     return this.http.post(environment.url+url,d,{headers}).subscribe((data:any)=>{ callback(data) },
     (error: any) => {

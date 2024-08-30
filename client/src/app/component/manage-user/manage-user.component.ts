@@ -34,9 +34,7 @@ export class ManageUserComponent {
         this.loader=false;
         this.userList = res.data;
       }else{
-        console.log(23);
-        
-        this.alert.alert("error",res.error.message,"Error",{ displayDuration: 2000, pos: 'top' });
+        this.alert.alert("error",res.error ? res.error.message : res.message,"Error",{ displayDuration: 2000, pos: 'top' });
         this.loader=false;
       }
     })
@@ -52,7 +50,7 @@ export class ManageUserComponent {
         this.backToUser();
         this.loader=false;
       }else{
-        this.alert.alert("error",res.error.message,"Error",{ displayDuration: 2000, pos: 'top' });
+        this.alert.alert("error",res.error ? res.error.message : res.message,"Error",{ displayDuration: 2000, pos: 'top' });
         this.loader=false;
       }
     })
@@ -80,7 +78,7 @@ export class ManageUserComponent {
         this.alert.alert("success",res.message,"Success",{ displayDuration: 2000, pos: 'top' });
       }else{
         this.loader=false;
-        this.alert.alert("error",res.message,"Error",{ displayDuration: 2000, pos: 'top' });
+        this.alert.alert("error",res.error ? res.error.message : res.message,"Error",{ displayDuration: 2000, pos: 'top' });
       }
     })
   }
@@ -99,7 +97,7 @@ export class ManageUserComponent {
           this.alert.alert("error",res.message,"Success",{ displayDuration: 2000, pos: 'top' });
         }else{
           this.showModal.delete=false;
-          this.alert.alert("error",res.message,"Error",{ displayDuration: 2000, pos: 'top' });
+          this.alert.alert("error",res.error ? res.error.message : res.message,"Error",{ displayDuration: 2000, pos: 'top' });
         }
       })
   }

@@ -20,7 +20,9 @@ const storage = multer.diskStorage({
         cb(null, uploadDirectory);
     },
     filename: (req, file, cb) => {
-        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+        if(file){
+            cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+        }
     }
 });
 
@@ -30,7 +32,7 @@ const upload = multer({ storage });
 
 // **********Api to add OTA details with site icon *******
 
-router.post('/addOta', validateToken, upload.single('siteIcon'), (req, res) => {
+router.post('/addOta', validateToken, upload.single('siteIcon'),async (req, res) => {
     const { siteName, siteEndpoint, siteUser, sitePass, siteApiKey, siteOtherInfo, commission, commissionType } = req.body;
     const siteIconPath = req.file ? '/uploads/' + req.file.filename : null;
 
@@ -48,9 +50,10 @@ router.post('/addOta', validateToken, upload.single('siteIcon'), (req, res) => {
 
 // **********Api to Edit OTA details with site icon *******
 
-router.post('/editOta', validateToken, upload.single('siteIcon'), (req, res) => {
+router.post('/editOta', validateToken,upload.single('siteIcon'), async (req, res) => {
+  
     const { siteName, siteEndpoint, siteUser, sitePass, siteApiKey, siteOtherInfo, commission, commissionType, id } = req.body;
-    const siteIconPath = req.file ? '/uploads/' + req.file.filename : null;
+    const siteIconPath = req.file ? '/uploads/' + req.file.filename : req.body.siteIcon;
 
     const sql = `
     UPDATE ota

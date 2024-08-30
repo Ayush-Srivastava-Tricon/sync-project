@@ -24,7 +24,7 @@ export class LoginComponent {
           window.location.href = "/#/view_calendar";
         }, 1000);
       }else{
-        this.alert.alert("trash",res.message,"Error",{ displayDuration: 1000, pos: 'top' });
+        this.alert.alert("trash",res.error ? res.error.message : res.message,"Error",{ displayDuration: 1000, pos: 'top' });
       }
     })
   }
