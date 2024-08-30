@@ -3,7 +3,6 @@ const db = require("./config/db.js");
 const dotenv = require('dotenv');
 const cors = require("cors");
 const path = require('path');
-const bodyParser = require('body-parser');
 const callApi = require("./cron.js");
 dotenv.config();
 
@@ -17,8 +16,7 @@ const app = express();
 app.use(cors());
 app.use('/uploads', express.static(path.join(__dirname, 'routes', 'uploads')));
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+app.use(express.json({ extended: false }));
 
 
 app.get("/call", async (req, res) => {
