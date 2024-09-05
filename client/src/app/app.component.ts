@@ -12,7 +12,6 @@ export class AppComponent {
   isLoggedIn:boolean=false;
 
   constructor(private router: Router,private auth:AuthService) {
-    console.log(232);
     
       router.events.forEach((event) => {
         if (event instanceof NavigationStart) {

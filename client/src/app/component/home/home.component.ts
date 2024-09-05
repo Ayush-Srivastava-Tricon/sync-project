@@ -1,4 +1,5 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
+import { ManageContentComponent } from '../manage-content/manage-content.component';
 
 @Component({
   selector: 'app-home',
@@ -7,13 +8,12 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 })
 export class HomeComponent {
 
-  @ViewChild("aboutus") aboutus!: ElementRef;
-  @ViewChild("contactus") contactus!: ElementRef;
+  @ViewChild(ManageContentComponent) child!:ManageContentComponent;
 
   constructor() { }
 
   focus(section: any) {
-    section == 'aboutus' ? this.aboutus.nativeElement.scrollIntoView() : this.contactus.nativeElement.scrollIntoView();
+  this.child.focus(section);
 
   }
 

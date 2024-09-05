@@ -67,6 +67,15 @@ const routes: Routes = [
     loadChildren:()=>import("./component/manage-user/manage-user.module").then(m=>m.ManageUserModule),
     canActivate:[AuthGuard]
   },
+  {
+    path:'manage_content',
+    loadChildren:()=>import("./component/manage-content/manage-content.module").then(m=>m.ManageContentModule),
+    canActivate:[AuthGuard]
+  },
+  {
+    path:'manage_content/privacy_policy',
+    loadChildren:()=>import("./component/manage-content/privacy-policy/privacy-policy.module").then(m=>m.PrivacyPolicyModule)
+  }
 ];
 
 @NgModule({
