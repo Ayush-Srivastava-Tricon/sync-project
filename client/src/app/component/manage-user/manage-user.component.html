@@ -19,6 +19,7 @@
                         <tr class="table-row-rooms">
                             <th>Name</th>
                             <th>Email</th>
+                            <th>Role</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -27,15 +28,17 @@
                             <td class="tg-cly1"></td>
                             <td class="tg-cly1"></td>
                             <td class="tg-cly1"></td>
+                            <td class="tg-cly1"></td>
                         </tr>
                         <tr *ngIf="userList.length==0 && !loader">
-                            <td colspan="3" class="text-center">
+                            <td colspan="4" class="text-center">
                                 No Data
                             </td>
                         </tr>
                         <tr *ngFor="let item of userList;let idx = index;" class="text-center align-middle">
                             <td>{{item.name}}</td>
                             <td>{{item.email}}</td>
+                            <td>{{item.role}}</td>
                             <td>
                                 <div class="d-flex">
                                     <button type="button" class="btn btn-primary btn-sm" (click)="editKeeperOpenModal(item)">
@@ -49,7 +52,7 @@
                                             </path>
                                         </svg>
                                     </button>
-                                    <button type="button" class="btn btn-danger btn-sm mx-2" (click)="deleteKeeperModal(item.id)">
+                                    <button type="button" class="btn btn-danger btn-sm mx-2" (click)="deleteUserModal(item.id)">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                             fill="currentColor" class="bi bi-person-x-fill" viewBox="0 0 16 16">
                                             <path fill-rule="evenodd"
@@ -98,6 +101,16 @@
             <label class="col-sm-5 col-form-label" for="cleanStatus">Password <span class="text-danger">*</span></label>
             <div class="col-sm-7">
                 <input type="password" id="name" [(ngModel)]="userConfig.password" placeholder="ABCDEFG">
+            </div>
+        </div>
+        <div class="form-group row ">
+            <label class="col-sm-5 col-form-label" for="cleanStatus">Role <span class="text-danger">*</span></label>
+            <div class="col-sm-7">
+                <select class="form-select" [(ngModel)]="userConfig.role">
+                    <option value="" disabled>Select</option>
+                    <option value="user" >User</option>
+                    <option value="booking_engine" >Booking Engine</option>
+                </select>
             </div>
         </div>
 

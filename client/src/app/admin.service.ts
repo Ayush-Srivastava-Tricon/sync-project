@@ -32,6 +32,10 @@ export class AdminService extends BaseService {
     this.postData(apiEndPoint, this.httpUrls['IMPORT_PROPERTY_LIST_FROM_URL'], callback);
   }
 
+  deleteProperty(params: any, callback: any) {
+    this.postData(params, this.httpUrls['DELETE_PROPERTY'], callback);
+  }
+
   getPropertyListByOTAId(params: any, callback: any) {
     this.postData(params, this.httpUrls['GET_PROPERTY_LIST_BY_OTA'], callback);
   }
@@ -44,6 +48,10 @@ export class AdminService extends BaseService {
     this.postData(params, this.httpUrls['GET_ROOM_LIST_BY_PROPERTY'], callback);
   }
 
+  deleteRoom(params: any, callback: any) {
+    this.postData(params, this.httpUrls['DELETE_ROOM'], callback);
+  }
+
   importCalendarData(params: any, callback: any) {
     this.postData(params, this.httpUrls['IMPORT_CALENDAR_DATA'], callback);
   }
@@ -51,7 +59,10 @@ export class AdminService extends BaseService {
 
   fetchCalendarDataByStartEndDate(params:any,callback:any){
     this.postData(params,this.httpUrls['GET_CALENDAR_DATA'],callback)
+  }
 
+  fetchAllCalendarData(callback:any){
+    this.getData({},this.httpUrls['GET_ALL_CALENDAR_DATA'],callback)
   }
 
   checkAvailability(params:any,callback:any){

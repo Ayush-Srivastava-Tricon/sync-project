@@ -56,10 +56,8 @@ export class ListReservationComponent {
 
   searchByFilter() {
     this.loader = true;
-    console.log(32);
-    
     if(this.searchFilterValue){
-      this.filteredReservation = this.reservtionList.filter((ele:any)=>ele.bookingRefId.includes(this.searchFilterValue))
+      this.filteredReservation = this.reservtionList.filter((ele:any)=>(ele.bookingRefId.includes(this.searchFilterValue)) || ele.contact.firstName.includes(this.searchFilterValue));
     }else{
       this.filteredReservation = this.reservtionList;
     }

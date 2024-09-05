@@ -299,3 +299,8 @@ body {
     display: inline-block;
     width: 160px;
   }
+
+  .import-btn.disabled{
+    pointer-events: none;
+    opacity: 0.7;
+}

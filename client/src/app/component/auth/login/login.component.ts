@@ -19,14 +19,16 @@ export class LoginComponent {
       if(res.success){
         this.alert.alert("success",res.message,"Success",{ displayDuration: 1000, pos: 'top' });
         localStorage.setItem("isLoggedIn",JSON.stringify(true));
-        localStorage.setItem("role",JSON.stringify(res.role));
+        this._service.setTokenIntoLocal(res.data);
         setTimeout(() => {
-          window.location.href = "/#/manage_ota";
+          window.location.href = "/#/view_calendar";
         }, 1000);
       }else{
-        this.alert.alert("trash",res.message,"Error",{ displayDuration: 1000, pos: 'top' });
+        this.alert.alert("trash",res.error ? res.error.message : res.message,"Error",{ displayDuration: 1000, pos: 'top' });
       }
     })
   }
+  
+ 
 
 }
