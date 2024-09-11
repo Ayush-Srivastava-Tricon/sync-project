@@ -90,12 +90,15 @@ export class CalendarComponent {
   }
 
   fetchAllCalendarData() {
+    this.loader=true;
     this._service.fetchAllCalendarData((res: any) => {
       if (res.status == 200) {
         this.selectedDate({ target: { value: this.formatDate(this.todayDate) } });
         this.mainData = res.data;
+        this.loader=false;
         console.log(this.mainData);
-
+      }else{
+        this.loader=false;
       }
     })
   }

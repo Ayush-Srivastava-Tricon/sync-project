@@ -8,6 +8,6 @@ import { Component } from '@angular/core';
 export class PrivacyPolicyComponent {
 
   constructor(){
-    window.scroll(0,0)
+    window.scroll(0,0);
   }
 }

@@ -74,7 +74,7 @@ const routes: Routes = [
   },
   {
     path:'manage_content/privacy_policy',
-    loadChildren:()=>import("./component/manage-content/privacy-policy/privacy-policy.module").then(m=>m.PrivacyPolicyModule)
+    loadChildren:()=>import("./component/manage-content/privacy-policy/privacy-policy.module").then(m=>m.PrivacyPolicyModule),
   }
 ];
 

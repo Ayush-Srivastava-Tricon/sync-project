@@ -33,6 +33,11 @@
       </select>
     </div>
   </div>
+  <div class="row">
+    <div class="col-sm-12 text-primary text-center" *ngIf="loader">
+      <div class="spinner-border text-primary " style="width: 5rem; height: 5rem;"></div>
+    </div>
+  </div>
   <div class="container-fluid text-center" *ngIf="!loader && mainData.length == 0">
     <div class="display-1">No Rooms Found</div>
   </div>
