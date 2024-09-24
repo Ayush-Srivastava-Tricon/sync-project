@@ -327,7 +327,7 @@
                                                     class="x-el x-el-div c1-1 c1-2 c1-8f c1-6k c1-8o c1-b4 c1-z c1-1z c1-8q c1-21 c1-8r c1-b c1-c c1-b5 c1-b6 c1-b7 c1-8u c1-8v c1-b8 c1-8x c1-d c1-b9 c1-ba c1-bb c1-e c1-f c1-g">
                                                     <div data-ux="Block" data-aid="CONTACT_FORM_CONTAINER_REND"
                                                         class="x-el x-el-div c1-1 c1-2 c1-6c c1-6j c1-b c1-c c1-d c1-e c1-f c1-g">
-                                                        <form aria-live="polite" data-ux="Form"
+                                                        <div aria-live="polite" data-ux="Form"
                                                             class="x-el x-el-form c1-1 c1-2 c1-26 c1-b c1-c c1-d c1-e c1-f c1-g">
                                                             <input type="text" name="_app_id" autoComplete="off"
                                                                 tabindex="-1" style="display:none" value="" />
@@ -343,7 +343,7 @@
                                                                     <div data-ux="InputFloatLabel" type="text"
                                                                         data-aid="CONTACT_FORM_NAME"
                                                                         class="x-el x-el-div c1-1 c1-2 c1-s c1-2b c1-b c1-c c1-d c1-e c1-f c1-g">
-                                                                        <input type="text" role="textbox"
+                                                                        <input type="text" role="textbox" [(ngModel)]="mailConfig['name']"
                                                                             aria-multiline="false"
                                                                             data-ux="InputFloatLabel" id="input167551"
                                                                             value="" data-aid="CONTACT_FORM_NAME"
@@ -363,7 +363,7 @@
                                                                     <div data-ux="InputFloatLabel" type="text"
                                                                         data-aid="e-mail"
                                                                         class="x-el x-el-div c1-1 c1-2 c1-s c1-2b c1-b c1-c c1-d c1-e c1-f c1-g">
-                                                                        <input type="text" role="textbox"
+                                                                        <input type="text" role="textbox" [(ngModel)]="mailConfig['email']"
                                                                             aria-multiline="false"
                                                                             data-ux="InputFloatLabel" id="input167552"
                                                                             value="" data-aid="e-mail"
@@ -380,7 +380,7 @@
                                                                 class="x-el x-el-div c1-1 c1-2 c1-4v c1-b c1-c c1-d c1-e c1-f c1-g">
                                                                 <div data-ux="Block"
                                                                     class="x-el x-el-div c1-1 c1-2 c1-b c1-c c1-d c1-e c1-f c1-g">
-                                                                    <textarea role="textbox" aria-multiline="true"
+                                                                    <textarea [(ngModel)]="mailConfig['message']" role="textbox" aria-multiline="true"
                                                                         rows="4" aria-label="Message"
                                                                         data-ux="InputTextArea" placeholder="Message"
                                                                         data-aid="CONTACT_FORM_MESSAGE"
@@ -398,7 +398,7 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                        </form>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>

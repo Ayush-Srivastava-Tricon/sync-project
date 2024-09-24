@@ -130,7 +130,7 @@ body {
   border-radius: 3px 3px 0 0;
 
   .title {
-    background: linear-gradient(120deg, #f093fb 0%, #f5576c 100%);
+    background: #2B2427;
     font-size: 15px;
     color: white;
     padding: 7px;
@@ -371,6 +371,7 @@ td.action-btn {
 
 ::-webkit-scrollbar {
   width: 10px;
+  cursor: grab;
 }
 
 /* Track */
@@ -380,10 +381,14 @@ td.action-btn {
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background-image: linear-gradient(120deg, #a6c0fe 0%, #f68084 100%);
+  background: #C9CCD3;
+  background-image: linear-gradient(-180deg, rgba(255,255,255,0.50) 0%, rgba(0,0,0,0.50) 100%);
+  background-blend-mode: lighten;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background-image: linear-gradient(120deg, #a6c0fe 0%, #f68084 100%);
+  background: #C9CCD3;
+  background-image: linear-gradient(-180deg, rgba(255,255,255,0.50) 0%, rgba(0,0,0,0.50) 100%);
+  background-blend-mode: lighten;
 }
