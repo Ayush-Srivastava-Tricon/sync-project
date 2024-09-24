@@ -61,6 +61,34 @@ body {
     .showcase .showcase-text {
       padding: 7rem;
     }
+
+  }
+
+  @media (max-width:500px) {
+    .logo {
+      width: 150px;
+      height: 60px;
+  }
+}
+
+  @media (max-width: 1000px){
+    .logo {
+      width: auto;
+      height: 63px;
+  }
+    .login{
+      display: none;
+    }
+    .nav-item.login{
+      display: block !important;
+    }
+    .navbar-collapse .navbar-nav{
+      background: black;
+        opacity: 0.8;
+        padding-left: 10px;
+        display: inline-block;
+        width: 150px;
+    }
   }
   
   .features-icons {
@@ -129,4 +157,11 @@ body {
     margin-top: 10px;
   }
 
- 
+.nav-item.login{
+  display: none;
+}
+
+.navbar-toggler{
+  background-color: white;
+}
+
