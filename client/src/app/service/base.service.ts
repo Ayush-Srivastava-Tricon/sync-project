@@ -39,6 +39,7 @@ export class BaseService {
     'GET_CONTENT':"/get_content",
     'UPDATE_CONTENT':"/update_content",
     'UPDATE_ABOUT_US_CONTENT':"/update_content/about_us",
+    'SEND_MAIL':"/contact_mail",
 
 
   }
