@@ -38,7 +38,7 @@ router.post('/login', (req, res) => {
     return res.status(400).json({ error: 'Email and password are required' });
   }
 
-  const sql = 'SELECT email, password, role FROM user WHERE email = ?';
+  const sql = 'SELECT email, password, role, id FROM user WHERE email = ?';
   const values = [email];
 
   let accessToken, refreshToken;
@@ -57,19 +57,16 @@ router.post('/login', (req, res) => {
         if (results[i].role == 'admin') {
           accessToken = jwt.sign({ user: results[i] }, jwttoken.adminsecretkey, { expiresIn: '1h' });
           refreshToken = jwt.sign({ user: results[i] }, jwttoken.adminsecretkey, { expiresIn: '24h' });
-        } else if (results[i].role == 'booking_engine') {
-          accessToken = jwt.sign({ user: results[i] }, jwttoken.bingtripToken, { expiresIn: '1h' });
-          refreshToken = jwt.sign({ user: results[i] }, jwttoken.bingtripToken, { expiresIn: '24h' });
         } else {
-          accessToken = jwt.sign({ user: results[i] }, jwttoken.usersecretkey, { expiresIn: '1h' });
-          refreshToken = jwt.sign({ user: results[i] }, jwttoken.usersecretkey, { expiresIn: '24h' });
+          accessToken = jwt.sign({ user: results[i] }, jwttoken.sellersecretkey, { expiresIn: '1h' });
+          refreshToken = jwt.sign({ user: results[i] }, jwttoken.sellersecretkey, { expiresIn: '24h' });
         }
         break;
       }
     }
-
+    console.log(results[0]);
     if (userExists) {
-      res.json({ success: true, message: 'Login successful', data: { token: accessToken, refreshToken, role: results[0].role } });
+      res.json({ success: true, message: 'Login successful', data: { token: accessToken, refreshToken, role: results[0].role , user_id:results[0].id } });
     } else {
       res.status(400).json({ success: false, message: 'Invalid credentials' });
     }
@@ -168,17 +165,13 @@ router.post("/refreshToken", async (req, res) => {
       decoded = jwt.verify(refreshToken, jwttoken.adminsecretkey);
       accessToken = jwt.sign({ user: decoded.user }, jwttoken.adminsecretkey, { expiresIn: '1h' });
       refresh_token = jwt.sign({ user: decoded.user }, jwttoken.adminsecretkey, { expiresIn: '24h' });
-    } else if (role == 'booking_engine') {
-      decoded = jwt.verify(refreshToken, jwttoken.bingtripToken);
-      accessToken = jwt.sign({ user: decoded.user }, jwttoken.bingtripToken, { expiresIn: '1h' });
-      refresh_token = jwt.sign({ user: decoded.user }, jwttoken.bingtripToken, { expiresIn: '24h' });
     } else {
-      decoded = jwt.verify(refreshToken, jwttoken.usersecretkey);
-      accessToken = jwt.sign({ user: decoded.user }, jwttoken.usersecretkey, { expiresIn: '1h' });
-      refresh_token = jwt.sign({ user: decoded.user }, jwttoken.usersecretkey, { expiresIn: '24h' });
+      decoded = jwt.verify(refreshToken, jwttoken.sellersecretkey);
+      accessToken = jwt.sign({ user: decoded.user }, jwttoken.sellersecretkey, { expiresIn: '1h' });
+      refresh_token = jwt.sign({ user: decoded.user }, jwttoken.sellersecretkey, { expiresIn: '24h' });
     }
 
-    res.send({ status: 200, message: "Success", data: { token: accessToken, refreshToken: refresh_token, role: decoded.user.role } });
+    res.send({ status: 200, message: "Success", data: { token: accessToken, refreshToken: refresh_token, role: decoded.user.role,user_id:decoded.user.id } });
   } catch (err) {
 
     res.status(400).send({ message: 'Something went wrong', error: err.message });

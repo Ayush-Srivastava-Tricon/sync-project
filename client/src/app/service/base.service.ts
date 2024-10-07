@@ -14,6 +14,10 @@ export class BaseService {
     'EDIT_OTA':'/editOta',
     'DELETE_OTA':'/deleteOta',
     'GET_OTA_LIST':'/getOta',
+    'GET_OTA_LIST_BY_USER':'/getOtaByUser',
+    'ADD_OTA_BY_USER':'/addOtaUser',
+    'EDIT_OTA_BY_USER':'/editOtaUser',
+    'DELETE_OTA_BY_USER':'/deleteOtaUser',
 
 
     //ADMIN//
@@ -124,6 +128,7 @@ export class BaseService {
     localStorage.setItem("token",data.token);
     localStorage.setItem("refreshToken",data.refreshToken);
     localStorage.setItem("role",data.role);
+    localStorage.setItem("user_id",data.user_id);
 }
   
 }

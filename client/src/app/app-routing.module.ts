@@ -48,6 +48,11 @@ const routes: Routes = [
     canActivate:[AuthGuard]
   },
   {
+    path: "manage_ota_user",
+    loadChildren: () => import("./component/manage-ota-user/manage-ota-user.module").then(m => m.ManageOtaUserModule),
+    canActivate:[AuthGuard]
+  },
+  {
     path: "booking_log",
     loadChildren: () => import("./component/booking-log/booking-log.module").then(m => m.BookingLogModule),
     canActivate:[AuthGuard]
