@@ -1,0 +1,132 @@
+<div class="container-fluid"  *ngIf="!showModal">
+<div class="row justify-content-center align-items-center">
+    <div class="col-sm-12">
+        <div class="table-wrapper shadow table-responsive">
+            <div class="table-title">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <span class="title">Seller List</span>
+                    </div>
+                    <div class="col-sm-6">
+                        <a href="javascript:void(0);" class="btn btn-success import-btn" data-toggle="modal"
+                            (click)="hideModal()"><span>Add
+                                Seller Detail</span></a>
+                    </div>
+                </div>
+            </div>
+            <table class="table table-shadow table-lg table-hover">
+                <thead class="thead-dark">
+                    <tr class="table-row-rooms">
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Username</th>
+                        <th>Website Url</th>
+                        <th>Ip Address</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngIf="loader">
+                        <td class="tg-cly1"></td>
+                        <td class="tg-cly1"></td>
+                        <td class="tg-cly1"></td>
+                        <td class="tg-cly1"></td>
+                        <td class="tg-cly1"></td>
+                        <td class="tg-cly1"></td>
+                        <td class="tg-cly1"></td>
+                    </tr>
+                    <tr *ngIf="!loader && sellerList.length== 0">
+                        <td colspan="10" class="text-center">No data found, please Add Seller </td>
+                    </tr>
+                    <ng-container *ngIf="sellerList.length>0">
+                        <tr class="text-center align-middle" *ngFor="let item of sellerList">
+                            <td>{{item.seller_id}}</td>
+                            <td>{{item.name}}</td>
+                            <td>{{item.user_name}}</td>
+                            <td> <a href="javascript:void(0);" target="_blank" class="text-primary text-decoration-none me-2 ">{{item.website}}</a></td>
+                            <td>
+                                <div class="d-flex align-items-center justify-content-center"><span
+                                        *ngFor="let ip of item.ip_address"
+                                        class="badge bg-primary me-1">{{ip.ip}}</span></div>
+                            </td>
+                            <td> <span class="badge me-1"
+                                    [ngClass]="{'bg-success': item.status == '1', 'bg-danger': item.status == '0'}">{{item.status
+                                    == '1' || item.status == 1 ? 'Active' : 'Inactive'}}</span></td>
+                            <td>Action</td>
+                        </tr>
+                    </ng-container>
+
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+</div>
+
+<ng-container *ngIf="showModal">
+    <div class="my-3 ms-2 d-flex justify-content-between bg-light p-2">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb m-0">
+                <li class="breadcrumb-item"><i class="bi bi-arrow-90deg-left mx-2"></i>
+                    <a href="javascript:void(0);" class="text-decoration-none" (click)="backToManageOta()">Back to
+                        Manage Seller</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">{{isEditModal? 'Edit':'Add'}} Seller</li>
+            </ol>
+        </nav>
+    </div>
+</ng-container>
+<div class="container shadow p-4 px-5 rounded bg-white w-50 ng-untouched ng-pristine ng-invalid" *ngIf="showModal"
+    [formGroup]="sellerForm">
+    <div class="row px-5 mb-2 mt-5">
+        <div class="col-sm-12 text-center">
+            <div class="form-group row mb-2"><label class="col-sm-3 col-form-label">Name <span
+                        class="text-danger">*</span></label>
+                <div class="col-sm-9"><input type="text" formControlName="name"
+                        class="form-control ng-untouched ng-pristine ng-invalid"></div>
+            </div>
+            <div class="form-group row mb-2"><label class="col-sm-3 col-form-label">User Name</label>
+                <div class="col-sm-9"><input type="text" formControlName="user_name"
+                        class="form-control ng-untouched ng-pristine ng-invalid" placeholder="Enter User Name"></div>
+            </div>
+        </div>
+    </div>
+    <div class="row px-5">
+        <div class="col-sm-12 text-center">
+            <div class="form-group row mb-2"><label class="col-sm-3 col-form-label">Password</label>
+                <div class="col-sm-9"><input type="password" formControlName="password"
+                        class="form-control ng-untouched ng-pristine ng-invalid" placeholder="Enter Your Password">
+                </div>
+            </div>
+            <div class="form-group row mb-2"><label for="propertyName" class="col-sm-3 col-form-label">Site Pass</label>
+                <div class="col-sm-9"><input type="text" formControlName="website"
+                        class="form-control ng-untouched ng-pristine ng-invalid" placeholder="Enter your website"></div>
+            </div>
+        </div>
+    </div>
+    <div class="row px-5">
+        <div class="col-sm-12 text-center">
+            <div class="form-group row mb-2"><label class="col-sm-3 col-form-label">IP
+                    Addresses</label>
+                <div class="col-sm-9">
+                    <ng-container formArrayName="ip_address"
+                        *ngFor="let ip of getterIpAddress.controls;let idx = index;">
+                        <ng-container [formGroupName]="idx">
+                            <input type="text" formControlName="ip"
+                                class="form-control ng-untouched ng-pristine ng-invalid my-2"
+                                placeholder="ip address {{idx+1}}">
+                        </ng-container>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-3 px-5 mb-2">
+        <div class="col-sm-12 d-flex align-items-center">
+            <button type="submit" class="btn btn-success" (click)="createNewSeller()">Submit</button>
+            <div class="spinner-border text-primary mx-2" *ngIf="loader"></div>
+        </div>
+    </div>
+</div>

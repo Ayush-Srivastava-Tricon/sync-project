@@ -33,4 +33,16 @@ export class SellerService extends BaseService {
     this.postData(params, this.httpUrls['DELETE_OTA_BY_USER'], callback);
   }
 
+  fetchCountry(callback:any){
+    this.getData({},this.httpUrls['country'],callback)
+  }
+
+  fetchState(countryId:any,callback:any){
+    return this.http.get(this.httpUrls['state']+"?country_id="+countryId).subscribe((data:any)=>{ callback(data) })
+  }
+
+  fetchCity(countryId:any,stateId:any,callback:any){
+    return this.http.get(this.httpUrls['city']+"?country_id="+countryId+"&state_id="+stateId).subscribe((data:any)=>{ callback(data) })
+}
+
 }

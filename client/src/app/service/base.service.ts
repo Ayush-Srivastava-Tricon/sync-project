@@ -45,6 +45,12 @@ export class BaseService {
     'UPDATE_ABOUT_US_CONTENT':"/update_content/about_us",
     'SEND_MAIL':"/contact_mail",
 
+    'country' : '/country',
+    'state': '/state',
+    'city': '/city',
+    'fetchsellerlist': '/getSellers',
+    'savesellerlist': '/saveSeller',
+
 
   }
 

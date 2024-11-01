@@ -94,6 +94,17 @@ export class AdminService extends BaseService {
     this.postData(params,this.httpUrls['DELETE_USER'],callback)
   }
 
+  getSellerList(callback:any){
+    this.getData({}, this.httpUrls['fetchsellerlist'], callback);
+
+  }
+  savesellerlist(params:any,callback:any){
+    this.postData(params,this.httpUrls['savesellerlist'],callback)
+
+  }
+
+
+
 
 
 

@@ -1,0 +1,102 @@
+<div class="container-fluid mt-4">
+    <div class="discount-form">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="section">
+                    <h4>Margin</h4>
+                    <div class="form-group">
+                        <label for="name">Set margins per market</label>
+                        <select id="type">
+                            <option value="normal">Select Country</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="type"> Set margins per destination</label>
+                        <select id="type">
+                            <option value="normal">Select Country</option>
+                        </select>
+                    </div>
+                    <h4>Territory</h4>
+                    <div class="form-group">
+                        <label for="name">Where can the deal be sold:</label>
+                        <select id="type">
+                            <option value="normal">Select Country</option>
+                        </select>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="section">
+                    <h4>Selling period (standard all)</h4>
+                    <div class="form-group">
+                        <label>Start Date</label>
+                        <input type="date" placeholder="Leave empty field for all dates.">
+                    </div>
+                    <div class="form-group">
+                        <label>End Date</label>
+                        <input type="date" placeholder="Leave empty field for all dates.">
+                    </div>
+                    <h4>Travel period (standard all)</h4>
+                    <div class="form-group">
+                        <label>Start Date</label>
+                        <input type="date" placeholder="Leave empty field for all dates.">
+                    </div>
+                    <div class="form-group">
+                        <label>End Date</label>
+                        <input type="date" placeholder="Leave empty field for all dates.">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6 mb-4">
+                <div class="section">
+                    <div class="form-section">
+                        <h4>Excluding Selling Partners</h4>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="exclude_partners"
+                                (change)="showExcludingPartnerList = !showExcludingPartnerList">
+                            <label class="form-check-label" for="exclude_partners">
+                                Option to opt-out specific selling partners
+                            </label>
+                        </div>
+                        <div id="exclude_companies_section" *ngIf="showExcludingPartnerList">
+                            <label for="exclude_companies" class="form-label">Add Company name and websites to
+                                exclude:</label>
+                            <input type="text" class="form-control" id="exclude_companies" name="exclude_companies">
+                        </div>
+                        <h4>Policies</h4>
+                        <div class="mb-3">
+                            <label for="cancellation_policy" class="form-label">Cancellation policy:</label>
+                            <input type="text" class="form-control" id="cancellation_policy" name="cancellation_policy">
+                        </div>
+                        <div class="mb-3">
+                            <label for="payment_policy" class="form-label">Payment policy:</label>
+                            <input type="text" class="form-control" id="payment_policy" name="payment_policy">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="section my-4">
+                    <div class="form-section">
+                        <h4>Hotel Information</h4>
+                        <div class="mb-3">
+                            <label for="hotels_content" class="form-label">Hotels content:</label>
+                            <input type="text" class="form-control" id="hotels_content" name="hotels_content">
+                        </div>
+                        <div class="mb-3">
+                            <label for="hotel_allocation" class="form-label">Hotel/partner allocation:</label>
+                            <input type="text" class="form-control" id="hotel_allocation" name="hotel_allocation">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>

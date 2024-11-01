@@ -9,10 +9,12 @@ import { BaseService } from './service/base.service';
 import { HeaderModule } from './component/header/header.module';
 import { HashLocationStrategy,LocationStrategy } from '@angular/common';
 import { RoleInterceptor } from './role.interceptor';
+import { ManageUserSellerComponent } from './component/manage-user-seller/manage-user-seller.component';
 
 @NgModule({
   declarations: [
     AppComponent,
+    ManageUserSellerComponent,
   ],
   imports: [
     BrowserModule,

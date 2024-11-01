@@ -80,7 +80,23 @@ const routes: Routes = [
   {
     path:'manage_content/privacy_policy',
     loadChildren:()=>import("./component/manage-content/privacy-policy/privacy-policy.module").then(m=>m.PrivacyPolicyModule),
-  }
+  },
+  {
+    path:'manage_rule_engine',
+    loadChildren:()=>import("./component/manage-rule-engine/manage-rule-engine.module").then(m=>m.ManageRuleEngineModule),
+  },
+  {
+    path:'set_rule_engine',
+    loadChildren:()=>import("./component/set-rule-engine/set-rule-engine.module").then(m=>m.SetRuleEngineModule),
+  },
+  {
+    path:'manage_seller',
+    loadChildren:()=>import("./component/manage-seller/manage-seller.module").then(m=>m.ManageSellerModule),
+  },
+  {
+    path:'manage_user_seller',
+    loadChildren:()=>import("./component/manage-seller/manage-seller.module").then(m=>m.ManageSellerModule),
+  },
 ];
 
 @NgModule({

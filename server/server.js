@@ -29,6 +29,8 @@ app.use('/api', require('./routes/userRoutes'));
 app.use('/api', require('./routes/otaRoutes'));
 app.use('/api', require('./routes/reservationRoutes.js'));
 app.use('/api', require('./routes/contentRoutes.js'));
+app.use('/api', require('./routes/ruleEngine.js'));
+app.use('/api', require('./routes/seller.js'));
 
 
 const PORT = process.env.PORT || 5000;
