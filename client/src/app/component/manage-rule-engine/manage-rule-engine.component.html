@@ -1,0 +1,71 @@
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4" style="color: #0d6efd;">Rule Engine</h2>
+                    <div>
+                        <div class="mb-3">
+                            <div class="form-check d-flex justify-content-between align-items-center">
+                                <label class="form-check-label" for="margin">Margin</label>
+                                <input class="form-check-input" type="checkbox" id="margin"  [(ngModel)]="ruleConfig.margin" (change)="onChange()">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check d-flex justify-content-between align-items-center">
+                                <label class="form-check-label" for="territory">Territory</label>
+                                <input class="form-check-input" type="checkbox" id="territory" [(ngModel)]="ruleConfig.territory" (change)="onChange()">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check d-flex justify-content-between align-items-center">
+                                <label class="form-check-label" for="sellingPeriod">Selling Period</label>
+                                <input class="form-check-input" type="checkbox" id="sellingPeriod" [(ngModel)]="ruleConfig.sellingPeriod" (change)="onChange()">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check d-flex justify-content-between align-items-center">
+                                <label class="form-check-label" for="travelPeriod">Travel Period</label>
+                                <input class="form-check-input" type="checkbox" id="travelPeriod"  [(ngModel)]="ruleConfig.travelPeriod" (change)="onChange()">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check d-flex justify-content-between align-items-center">
+                                <label class="form-check-label" for="excludingSellingPartner">Excluding Selling Partner</label>
+                                <input class="form-check-input" type="checkbox" id="excludingSellingPartner" [(ngModel)]="ruleConfig.excludingPartner" (change)="onChange()">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check d-flex justify-content-between align-items-center">
+                                <label class="form-check-label" for="cancellationPolicy">Cancellation Policy</label>
+                                <input class="form-check-input" type="checkbox" id="cancellationPolicy" [(ngModel)]="ruleConfig.cancellationPolicy" (change)="onChange()">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check d-flex justify-content-between align-items-center">
+                                <label class="form-check-label" for="paymentPolicy">Payment Policy</label>
+                                <input class="form-check-input" type="checkbox" id="paymentPolicy"  [(ngModel)]="ruleConfig.paymentPolicy" (change)="onChange()">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check d-flex justify-content-between align-items-center">
+                                <label class="form-check-label" for="hotelsContent">Hotels Content</label>
+                                <input class="form-check-input" type="checkbox" id="hotelsContent" [(ngModel)]="ruleConfig.hotelsContent" (change)="onChange()">
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <div class="form-check d-flex justify-content-between align-items-center">
+                                <label class="form-check-label" for="hotelPartnerAllocation">Hotel/partner allocation</label>
+                                <input class="form-check-input" type="checkbox" id="hotelPartnerAllocation" [(ngModel)]="ruleConfig.hotelPartnerAllocation" (change)="onChange()">
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-submit" (click)="submitValue()">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

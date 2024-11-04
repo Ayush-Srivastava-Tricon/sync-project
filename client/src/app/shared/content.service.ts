@@ -24,4 +24,8 @@ export class ContentService extends BaseService {
   updateAboutUsContent(formData:any,callback:any) {
     this.postData(formData,this.httpUrls['UPDATE_ABOUT_US_CONTENT'],callback);
   }
+
+  sendMail(params:any,callback:any){
+    this.postData(params,this.httpUrls['SEND_MAIL'],callback);
+  }
 }

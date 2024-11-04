@@ -88,7 +88,8 @@ export class ViewOtaComponent {
   }
 
   backToManageOta(){
-    this.router.navigate(['/manage_ota']);
+    let currentUserRole:any = localStorage.getItem("role");
+    this.router.navigate([currentUserRole == 'admin' ? '/manage_ota' : '/manage_ota_user']);
   }
 
   showDetail(item:any){

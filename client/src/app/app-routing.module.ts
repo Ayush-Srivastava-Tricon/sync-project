@@ -48,6 +48,11 @@ const routes: Routes = [
     canActivate:[AuthGuard]
   },
   {
+    path: "manage_ota_user",
+    loadChildren: () => import("./component/manage-ota-user/manage-ota-user.module").then(m => m.ManageOtaUserModule),
+    canActivate:[AuthGuard]
+  },
+  {
     path: "booking_log",
     loadChildren: () => import("./component/booking-log/booking-log.module").then(m => m.BookingLogModule),
     canActivate:[AuthGuard]
@@ -74,8 +79,24 @@ const routes: Routes = [
   },
   {
     path:'manage_content/privacy_policy',
-    loadChildren:()=>import("./component/manage-content/privacy-policy/privacy-policy.module").then(m=>m.PrivacyPolicyModule)
-  }
+    loadChildren:()=>import("./component/manage-content/privacy-policy/privacy-policy.module").then(m=>m.PrivacyPolicyModule),
+  },
+  {
+    path:'manage_rule_engine',
+    loadChildren:()=>import("./component/manage-rule-engine/manage-rule-engine.module").then(m=>m.ManageRuleEngineModule),
+  },
+  {
+    path:'set_rule_engine',
+    loadChildren:()=>import("./component/set-rule-engine/set-rule-engine.module").then(m=>m.SetRuleEngineModule),
+  },
+  {
+    path:'manage_seller',
+    loadChildren:()=>import("./component/manage-seller/manage-seller.module").then(m=>m.ManageSellerModule),
+  },
+  {
+    path:'manage_user_seller',
+    loadChildren:()=>import("./component/manage-seller/manage-seller.module").then(m=>m.ManageSellerModule),
+  },
 ];
 
 @NgModule({

@@ -3,17 +3,108 @@ const router = express.Router();
 const axios = require("axios");
 const connection = require("../config/db.js");
 const otaConfig = require("./otaConstant.js");
-const {validateBingTripToken, validateAdminToken} = require("../middleware/middleware.js");
+const { validateSellerToken, validateAdminToken } = require("../middleware/middleware.js");
+// const { startCronJob } = require('../cron.js');
+
+// *************** HOTEL INVENTORY ************
+
+router.get("/hotel_inventory", validateSellerToken, async (req, res) => {
+    const query = `
+    SELECT 
+        p.id AS property_id,
+        p.property_id AS property_unique_id,
+        p.name AS property_name,
+        p.address,
+        p.postal_code,
+        p.location,
+        p.country_code,
+        p.language,
+        p.currency_code,
+        p.time_zone,
+        p.longitude,
+        p.latitude,
+        p.num_of_accoms,
+        p.images AS property_images,
+        p.ota_id AS property_ota_id,
+        r.room_id,
+        r.name AS room_name,
+        r.description,
+        r.number_of_persons,
+        r.default_rate,
+        r.images AS room_images,
+        r.extra_beds,
+        r.ota_id AS room_ota_id,
+        r.property_id AS room_property_id,
+        r.rate_id
+    FROM properties p
+    LEFT JOIN rooms r ON p.property_id = r.property_id;
+  `;
+
+    connection.query(query, (error, results) => {
+        if (error) throw error;
+
+        const propertiesMap = {};
+
+        results.forEach(row => {
+            const propertyId = row.property_id;
+
+            if (!propertiesMap[propertyId]) {
+                propertiesMap[propertyId] = {
+                    property_id: row.property_unique_id,
+                    property_name: row.property_name,
+                    address: row.address,
+                    postal_code: row.postal_code,
+                    location: row.location,
+                    country_code: row.country_code,
+                    language: row.language,
+                    currency_code: row.currency_code,
+                    time_zone: row.time_zone,
+                    longitude: row.longitude,
+                    latitude: row.latitude,
+                    num_of_accoms: row.num_of_accoms,
+                    images: row.property_images ? row.property_images : [],
+                    ota_id: row.property_ota_id,
+                    rooms: []
+                };
+            }
+
+            if (row.room_id) {
+                propertiesMap[propertyId].rooms.push({
+                    room_id: row.room_id,
+                    name: row.room_name,
+                    description: row.description,
+                    number_of_persons: row.number_of_persons,
+                    default_rate: row.default_rate,
+                    room_images: row.room_images ? row.room_images : [],
+                    extra_beds: row.extra_beds,
+                    ota_id: row.room_ota_id,
+                    property_id: row.room_property_id,
+                    rate_id: row.rate_id
+                });
+            }
+        });
+
+        const propertiesArray = Object.values(propertiesMap);
+        res.send({ message: "Success", data: propertiesArray });
+    })
+})
+
+
 
 // ***************CHECK HOTEL AVAILABILITY ************
 
-router.post("/hotel_availability", validateBingTripToken, async (req, res) => {
-    const { check_in, check_out, occupancy } = req.body;
+router.post("/hotel_availability", validateSellerToken, async (req, res) => {
+    const { check_in, check_out, occupancy, hotel_id, room_id } = req.body;
+
+    if(new Date(check_in).setHours(0,0,0,0) < new Date().setHours(0,0,0,0)){
+        res.send({message:"Check in date is in the past"});
+        return;
+    }
 
     const diffInMs = new Date(check_out) - new Date(check_in);               //DIFFERENCE DAYS BETWEEN CHECK IN AND CHECK OUT DATE
     const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
 
-    const query = `
+    let query = `
         SELECT h.property_id AS hotelId, h.name, r.room_id AS roomId, r.name AS roomName, c.available AS availability, ra.rate_id as rateId,
         h.currency_code AS currencyCode,
         ra.rate_plan_id AS ratePlanId, ra.allotment, c.rate, c.min, c.max, c.stop_sale AS stopSale FROM properties h
@@ -23,13 +114,21 @@ router.post("/hotel_availability", validateBingTripToken, async (req, res) => {
         WHERE c.start_date BETWEEN ? AND ?
         AND c.available >= ?
         `;
+        const values = [check_in, check_out, occupancy.rooms];
 
-    const values = [check_in, check_out, occupancy.rooms];
+        if(hotel_id){
+            query+= ' AND h.property_id = ?';
+            values.push(hotel_id)
+        }
+        if(room_id){
+            query+= ' AND r.room_id = ?';
+            values.push(room_id)
+        }
+
 
     connection.query(query, values, (err, results) => {
 
-        console.log(results);
-        
+
         if (!err) {
             const hotels = {};
             const minAllotments = {};
@@ -71,11 +170,9 @@ router.post("/hotel_availability", validateBingTripToken, async (req, res) => {
                     };
 
                     hotels[row.hotelId].rooms.push(room);
-                    console.log(row);
                 }
             });
 
-            console.log(results);
 
             const response = {
                 msg: "Success",
@@ -101,7 +198,7 @@ router.post("/hotel_availability", validateBingTripToken, async (req, res) => {
 
 // *************CHECK BOOKING AVAILABILITY********
 
-router.post("/booking_availability", validateBingTripToken, async (req, response) => {
+router.post("/booking_availability", validateSellerToken, async (req, response) => {
 
     const { checkIn, checkOut, occupancy, hotelId, roomId, currency, rateId } = req.body;
 
@@ -186,7 +283,7 @@ router.post("/booking_availability", validateBingTripToken, async (req, response
 
 // **************CREATE RESERVATION/BOOKING *********
 
-router.post("/create_bookings", validateBingTripToken, async (req, res) => {
+router.post("/create_bookings", validateSellerToken, async (req, res) => {
     const {
         bookingRefId,
         checkIn,
@@ -310,11 +407,12 @@ async function entryIntoBookingLog(response, requestBody, orderStatus, remark) {
 
 
 router.get("/get_reservation_list", validateAdminToken, async (req, res) => {
+    const user_id = req.headers['user_id'];
     try {
 
-        const query = `SELECT * from bookings`;
-
-        connection.query(query, (err, result) => {
+        const query = `SELECT * from bookings WHERE user_id = ? `;
+        const value = [user_id]
+        connection.query(query,value, (err, result) => {
             if (!err) {
                 const parsedResults = result.map(row => ({
                     ...row,
@@ -337,9 +435,12 @@ router.get("/get_reservation_list", validateAdminToken, async (req, res) => {
 
 
 router.get("/get_booking_log", validateAdminToken, async (req, res) => {
+    const user_id = req.headers['user_id'];
     try {
-        const query = `SELECT * from booking_logs`;
-        connection.query(query, (err, result) => {
+
+        const query = `SELECT * from booking_logs WHERE user_id = ?`;
+        const value = [user_id];
+        connection.query(query,value, (err, result) => {
             if (!err) {
                 res.send({ message: "Booking Log List Fetched", status: 200, data: result })
             } else {
@@ -385,7 +486,7 @@ function getApiUrl(result, actionUrl, valueForParamData) {
 
 // **************API TO VERIFY BOOKING *********
 
-router.post("/booking_verify", validateBingTripToken, async (req, res) => {
+router.post("/booking_verify", validateSellerToken, async (req, res) => {
     const { bookingRefId } = req.body;
 
     const query = `SELECT bookings.*, log.orderStatus AS orderStatus FROM bookings JOIN booking_logs log ON bookings.bookingRefId = log.bookingRefId WHERE bookings.bookingRefId = ? `;
@@ -411,7 +512,7 @@ router.post("/booking_verify", validateBingTripToken, async (req, res) => {
 
 // **************API TO CANCEL BOOKING *********
 
-router.post("/booking_cancel", validateBingTripToken, async (req, res) => {
+router.post("/booking_cancel", validateSellerToken, async (req, res) => {
     const { bookingRefId } = req.body;
 
     const cancelQuery = `UPDATE booking_logs SET orderStatus = 'ORDER_CANCEL' WHERE bookingRefId = '${bookingRefId}'`;
@@ -439,7 +540,7 @@ router.post("/booking_cancel", validateBingTripToken, async (req, res) => {
 });
 
 function cancelBookingForOTA(bookingRefId) {
-    console.log("BOOKING ",bookingRefId);
+    console.log("BOOKING ", bookingRefId);
     return true;
 
 }

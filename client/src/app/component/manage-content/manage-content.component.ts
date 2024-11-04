@@ -30,6 +30,7 @@ export class ManageContentComponent {
   selectedAboutUsFiles: any = {};
   selectedRoleImage: any;
   isEditManageContent:boolean=false;
+  mailConfig:any={};
   
   @ViewChild("aboutus") aboutus!: ElementRef;
   @ViewChild("contactus") contactus!: ElementRef;
@@ -203,12 +204,16 @@ export class ManageContentComponent {
   }
 
   sendMail() {
-    //SMTP request
+    return ;
+    this.contentService.sendMail(this.mailConfig,(res:any)=>{
+      if(res.status == 200){
+        this.alert.alert("success", res.message, "Success", { displayDuration: 2000, pos: 'top' })
+      }
+    })
   }
 
   focus(section: any) {
     let th:any =  this;
     th[section].nativeElement.scrollIntoView();
-
   }
 }

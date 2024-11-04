@@ -1,0 +1,270 @@
+<div class="container-fluid" *ngIf="!showModal.ota">
+    <div class="row justify-content-center align-items-center">
+        <div class="col-sm-12">
+            <div class="table-wrapper shadow table-responsive">
+                <div class="table-title">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <span class="title">OTA User List</span>
+                        </div>
+                        <div class="col-sm-6">
+                            <a href="javascript:void(0);" (click)="openModal()" class="btn btn-success import-btn"
+                                data-toggle="modal"><span>Add OTA User</span></a>
+                        </div>
+                    </div>
+                </div>
+                <table class="table table-shadow table-lg table-hover">
+                    <thead class="thead-dark">
+                        <tr class="table-row-rooms">
+                            <th>ID</th>
+                            <th>Site Icon</th>
+                            <th>Site APIKey</th>
+                            <th>Site User</th>
+                            <th>Site Pass</th>
+                            <th>Site OtherInfo</th>
+                            <th>View</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngIf="loader">
+                            <td class="tg-cly1"></td>
+                            <td class="tg-cly1"></td>
+                            <td class="tg-cly1"></td>
+                            <td class="tg-cly1"></td>
+                            <td class="tg-cly1"></td>
+                        </tr>
+
+                        <tr *ngIf="otaUserList.length == 0">
+                            <td colspan="10" class="text-center">No data found, please Add OTA User</td>
+                        </tr>
+                        <ng-container *ngIf="otaUserList.length>0 && !loader">
+
+
+                            <tr *ngFor="let item of otaUserList;let idx = index;" class="text-center align-middle"
+                                (mouseover)="showActionDropDown[idx]=true"
+                                (mouseleave)="showActionDropDown[idx]=false;">
+                                <td>{{item.ota_user_id}}</td>
+                                <td>
+                                    <img [src]="siteIconPathBaseUrl+item.site_icon" loading="lazy"
+                                        class="img-top rounded" alt="Site Icon" width="120" height="100">
+                                </td>
+                                <td> <a href="javascript:void(0);" class="text-decoration-none fw-bold text-primary"
+                                        (click)="copyApiKey(item.site_apikey)">{{item.site_apikey}} </a> </td>
+                                <td>{{item.site_user}}</td>
+                                <td>{{item.site_pass}}</td>
+                                <td>{{item.site_otherinfo}}</td>
+                                <td><a href="javascript:void(0);" class="text-primary" (click)="viewProperty(item)">View
+                                        Property</a></td>
+                                <td class="action-btn">
+                                    <div class="d-flex" *ngIf="showActionDropDown[idx]">
+                                        <button type="button" class="btn btn-sm btn-light "
+                                            (click)="editOtaOpenModal(item) ">
+                                            <ng-container>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                    fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                                    <path
+                                                        d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z">
+                                                    </path>
+                                                    <path fill-rule="evenodd"
+                                                        d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z">
+                                                    </path>
+                                                </svg>
+                                            </ng-container>
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-danger mx-2"
+                                            (click)="toggleDeleteModal(item.ota_user_id)">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                                                <path
+                                                    d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5">
+                                                </path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-container>
+
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<ng-container *ngIf="showModal.ota">
+    <div class="my-3 ms-2 d-flex justify-content-between bg-light p-2">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb m-0">
+                <li class="breadcrumb-item"><i class="bi bi-arrow-90deg-left mx-2"></i>
+                    <a href="javascript:void(0);" class="text-decoration-none" (click)="backToManageOta()">Back to
+                        Manage OTA User</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">{{isEditModal? 'Edit':'Add'}} OTA</li>
+            </ol>
+        </nav>
+    </div>
+    <div class="container shadow p-4 px-5 rounded bg-white w-50" [formGroup]="otaModal">
+        <div class="row mb-5">
+            <div class="col-sm-12">
+                <div class="d-flex justify-content-around">
+                    <div class="image-box" [ngClass]="{'remove-bg':siteIcon}" title="choose Site icon"
+                        (click)="file.click()">
+                        <input type="file" hidden="true" (change)="chooseSiteIcon($event)" #file placeholder="Image"
+                            accept="image/*">
+                        <ng-container *ngIf="siteIcon">
+                            <img [src]="siteIcon" width="130" height="120" alt="">
+                        </ng-container>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="row px-5 mb-2 mt-5">
+            <div class="col-sm-12 text-center">
+                <div class="form-group row mb-2" *ngIf="!isEditModal">
+                    <label for="propertyName" class="col-sm-3 col-form-label">Name <span
+                            class="text-danger">*</span></label>
+                    <div class="col-sm-9">
+                        <select (change)="selectOtaNameAndId($event)" class="form-control"  >
+                            <option value="" selected>Select Value...</option>
+                            <option [value]="item|json" *ngFor="let item of otaModal.value.ota_id">{{item.site_name}}</option>
+                        </select>
+                        <!-- <input type="text" class="form-control" formControlName="site_name"
+                            [class.is-invalid]="otaModal.controls.site_name.dirty && otaModal.controls.site_name.errors?.['required']"> -->
+                        <!-- <small
+                            *ngIf="otaModal.controls.ota_id.dirty && otaModal.controls.ota_id.errors?.['required']"
+                            class="text-danger d-block text-start">Required</small> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row px-5">
+            <div class="col-sm-12 text-center">
+                <div class="form-group row mb-2">
+                    <label for="propertyName" class="col-sm-3 col-form-label">Site User</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" formControlName="site_user"
+                            [class.is-invalid]="(otaModal.controls.site_user.dirty && otaModal.controls.site_user.errors?.['required']) || (otaModal.controls.site_user.dirty && otaModal.controls.site_user.errors?.['pattern'])">
+                        <small
+                            *ngIf="otaModal.controls.site_user.dirty && otaModal.controls.site_user.errors?.['required']"
+                            class="text-danger d-block text-start">Required</small>
+                        <small
+                            *ngIf="otaModal.controls.site_user.dirty && otaModal.controls.site_user.errors?.['pattern']"
+                            class="text-danger d-block text-start">Only Number</small>
+                    </div>
+                </div>
+
+                <div class="form-group row mb-2">
+                    <label for="propertyName" class="col-sm-3 col-form-label">Site Pass</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" formControlName="site_pass"
+                            [class.is-invalid]="(otaModal.controls.site_pass.dirty && otaModal.controls.site_pass.errors?.['required']) || (otaModal.controls.site_pass.dirty && otaModal.controls.site_pass.errors?.['pattern'])">
+                        <small
+                            *ngIf="otaModal.controls.site_pass.dirty && otaModal.controls.site_pass.errors?.['required']"
+                            class="text-danger d-block text-start">Required</small>
+                        <small
+                            *ngIf="otaModal.controls.site_pass.dirty && otaModal.controls.site_pass.errors?.['pattern']"
+                            class="text-danger d-block text-start">Only Number</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row px-5">
+            <div class="col-sm-12 text-center">
+                <div class="form-group row mb-2">
+                    <label for="propertyName" class="col-sm-3 col-form-label">Site Api Key</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" formControlName="site_apikey"
+                            [class.is-invalid]="(otaModal.controls.site_apikey.dirty && otaModal.controls.site_apikey.errors?.['required']) || (otaModal.controls.site_apikey.dirty && otaModal.controls.site_apikey.errors?.['pattern'])">
+                        <small
+                            *ngIf="otaModal.controls.site_apikey.dirty && otaModal.controls.site_apikey.errors?.['required']"
+                            class="text-danger d-block text-start">Required</small>
+                        <small
+                            *ngIf="otaModal.controls.site_apikey.dirty && otaModal.controls.site_apikey.errors?.['pattern']"
+                            class="text-danger d-block text-start">Only Number</small>
+                    </div>
+                </div>
+
+                <div class="form-group row mb-2">
+                    <label for="propertyName" class="col-sm-3 col-form-label">Site Other Info</label>
+                    <div class="col-sm-9">
+                        <input type="number" class="form-control" formControlName="site_otherinfo"
+                            placeholder="Enter Theme ID"
+                            [class.is-invalid]="(otaModal.controls.site_otherinfo.dirty && otaModal.controls.site_otherinfo.errors?.['required']) || (otaModal.controls.site_otherinfo.dirty && otaModal.controls.site_otherinfo.errors?.['pattern'])">
+                        <small
+                            *ngIf="otaModal.controls.site_otherinfo.dirty && otaModal.controls.site_otherinfo.errors?.['required']"
+                            class="text-danger d-block text-start">Required</small>
+                        <small
+                            *ngIf="otaModal.controls.site_otherinfo.dirty && otaModal.controls.site_otherinfo.errors?.['pattern']"
+                            class="text-danger d-block text-start">Only Number</small>
+                    </div>
+                </div>
+
+                <div class="form-group row mb-2">
+                    <label for="propertyName" class="col-sm-3 col-form-label">Commission</label>
+                    <div class="col-sm-7">
+                        <input type="number" class="form-control" formControlName="commission"
+                            [class.is-invalid]="(otaModal.controls.commission.dirty && otaModal.controls.commission.errors?.['required']) || (otaModal.controls.commission.dirty && otaModal.controls.commission.errors?.['pattern'])">
+                        <small
+                            *ngIf="otaModal.controls.commission.dirty && otaModal.controls.commission.errors?.['required']"
+                            class="text-danger d-block text-start">Required</small>
+                        <ng-container *ngIf="otaModal.controls.commissionType.value == 'percentage'">
+                            <small
+                                *ngIf="otaModal.controls.commission.dirty && otaModal.controls.commission.errors?.['max']"
+                                class="text-danger d-block text-start">Max Percentage - 100</small>
+                            <small class="d-block text-start">Min - 0 , Max - 100</small>
+                        </ng-container>
+                    </div>
+                    <div class="col-sm-2">
+                        <select class="form-select" formControlName="commissionType" (change)="selectCommissioType($event)" >
+                            <option value="fixed">Fixed</option>
+                            <option value="percentage">Percentage</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-3 px-5 mb-2">
+            <div class="col-sm-12">
+                <button type="submit" class="btn btn-success" [disabled]="loader"
+                    (click)="isEditModal ? editOtaUser() : addNewOtaUser()">{{isEditModal?'Update':'Create OTA User'}}</button>
+                <div class="spinner-loader text-success" *ngIf="loader"></div>
+            </div>
+        </div>
+    </div>
+
+</ng-container>
+
+
+<!-- Modal -->
+<div class="modal" *ngIf="showModal.delete">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content delete-modal">
+            <div class="modal-body">
+                <ng-container *ngIf="showModal.delete">
+                    <div class="modal-header flex-row">
+                        <h4 class="modal-title w-100">Are you sure?</h4>
+                        <button (click)="closeModal()" type="button" class="btn btn-sm btn-ligt close">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p>This process can't be undone ?</p>
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal"
+                            (click)="closeModal()">Cancel</button>
+                        <button type="button" class="btn btn-outline-danger"
+                            (click)="deleteOta()">Delete</button>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-backdrop fade in" *ngIf="showModal.delete"></div>

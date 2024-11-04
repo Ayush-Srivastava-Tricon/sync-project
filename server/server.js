@@ -6,9 +6,8 @@ const path = require('path');
 const callApi = require("./cron.js");
 dotenv.config();
 
-const usersecretkey = process.env.USER_SECRET_KEY;
+const sellersecretkey = process.env.SELLER_SECRET_KEY;
 const adminsecretkey = process.env.ADMIN_SECRET_KEY;
-const bingtripToken = process.env.BINGTRIP_SECRET_KEY;
 
 const app = express();
 
@@ -30,13 +29,14 @@ app.use('/api', require('./routes/userRoutes'));
 app.use('/api', require('./routes/otaRoutes'));
 app.use('/api', require('./routes/reservationRoutes.js'));
 app.use('/api', require('./routes/contentRoutes.js'));
+app.use('/api', require('./routes/ruleEngine.js'));
+app.use('/api', require('./routes/seller.js'));
 
 
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
 
-exports.usersecretkey = usersecretkey;
+exports.sellersecretkey = sellersecretkey;
 exports.adminsecretkey = adminsecretkey;
-exports.bingtripToken = bingtripToken;
 
