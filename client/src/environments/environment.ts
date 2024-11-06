@@ -1,5 +1,5 @@
 export const environment = {
     production:true,
-    baseurl:`${window.location.protocol}//roomdeals.travel/uploads`,
-    url:`${window.location.protocol}//roomdeals.travel/api`
-};
+    baseurl:`https://roomdeals.travel/uploads`,
+    url:`https://roomdeals.travel/api`
+}

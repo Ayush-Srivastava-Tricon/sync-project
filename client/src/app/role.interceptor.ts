@@ -15,7 +15,7 @@ export class RoleInterceptor implements HttpInterceptor {
       const clonedRequest = req.clone({
         setHeaders: {
           Role: role,
-          User_id:user_id
+          Userid:user_id,
         }
       });
       return next.handle(clonedRequest);
