@@ -407,7 +407,7 @@ async function entryIntoBookingLog(response, requestBody, orderStatus, remark) {
 
 
 router.get("/get_reservation_list", validateAdminToken, async (req, res) => {
-    const user_id = req.headers['user_id'];
+    const user_id = req.headers['userid'];
     try {
 
         const query = `SELECT * from bookings WHERE user_id = ? `;
@@ -435,7 +435,7 @@ router.get("/get_reservation_list", validateAdminToken, async (req, res) => {
 
 
 router.get("/get_booking_log", validateAdminToken, async (req, res) => {
-    const user_id = req.headers['user_id'];
+    const user_id = req.headers['userid'];
     try {
 
         const query = `SELECT * from booking_logs WHERE user_id = ?`;

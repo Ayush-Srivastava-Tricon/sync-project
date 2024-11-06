@@ -437,7 +437,7 @@ async function deleteCalendarData(site_details) {
 router.post('/import_calendar_data_and_save', validateSellerToken, async (req, res) => {
     try {
         const { site_details, authType, apiUrl } = req.body;
-        const user_id = req.headers['user_id'];
+        const user_id = req.headers['userid'];
         await deleteCalendarData(site_details);
         await importAndSaveData(site_details, authType, apiUrl,user_id);
         res.send({ message: 'Data fetched and saved successfully', status: 200 });
@@ -632,7 +632,7 @@ router.post("/fetch_calendar_data_by_start_end_date", validateSellerToken, async
 //***********FETCH ALL CALENDAR DATA */
 
 router.get("/fetch_all_calendar_data", validateSellerToken, (req, res) => {
-    const user_id = req.headers['user_id'];
+    const user_id = req.headers['userid'];
     const query = `SELECT * FROM calendar WHERE user_id = ?`;
     const value = [user_id];
     connection.query(query,value, (err, results) => {
@@ -679,7 +679,7 @@ function formatDate(date) {
 // **********Fetching OTA LIST By User *******
 
 router.get('/getOtaByUser', validateSellerToken, (req, res) => {
-    const user_id = req.headers['user_id'];
+    const user_id = req.headers['userid'];
     const sql = 'SELECT * , ota_name as site_name FROM ota_user WHERE user_id = ?';
     const value = [user_id];
     connection.query(sql, value,(err, result) => {
@@ -695,7 +695,7 @@ router.get('/getOtaByUser', validateSellerToken, (req, res) => {
 // **********Add OTA LIST By User *******
 
 router.post('/addOtaUser', validateSellerToken, upload.single('siteIcon'),async (req, res) => {
-    const user_id = req.headers['user_id'];
+    const user_id = req.headers['userid'];
     console.log(user_id);
     
     const { ota_id, siteName, siteUser, sitePass, siteApiKey, siteOtherInfo, commission, commissionType } = req.body;
@@ -718,7 +718,7 @@ router.post('/addOtaUser', validateSellerToken, upload.single('siteIcon'),async 
 // **********Edit OTA LIST By User *******
 
 router.post('/editOtaUser', validateSellerToken, upload.single('siteIcon'),async (req, res) => {
-    const user_id = req.headers['user_id'];
+    const user_id = req.headers['userid'];
     
     const { ota_id, siteUser, sitePass, siteApiKey, siteOtherInfo, commission, commissionType, id } = req.body;
     const siteIconPath = req.file ? '/' + req.file.filename : req.body.siteIcon;
