@@ -4,8 +4,8 @@ import { ManageRuleEngineComponent } from './manage-rule-engine.component';
 
 const routes: Routes = [
   {
-    path:'',
-    component:ManageRuleEngineComponent
+    path: '',
+    component: ManageRuleEngineComponent
   }
 ];
 
