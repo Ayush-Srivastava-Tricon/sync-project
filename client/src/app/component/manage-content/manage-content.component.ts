@@ -53,6 +53,13 @@ export class ManageContentComponent {
     }
   }
 
+  isFileExceed8mb(file:any){
+    if(file.size > 8*1024*1024){
+      return true;
+    }
+    return false;
+  }
+
   getHomeContentData(subSection: any, event: any) {
     this.contentData['home'].content_data[subSection] = event.target.textContent;
   }
@@ -60,6 +67,8 @@ export class ManageContentComponent {
   loadContent() {
     this.contentService.getContent((res: any) => {
       if (res.status == 200) {
+        console.log(res.data);
+        
         this.seperateSectionData(res.data);
       }
     });
@@ -79,6 +88,10 @@ export class ManageContentComponent {
 
   chooseHomeImg(event: any) {
     this.selectedFile = event.target.files[0];
+    if(this.isFileExceed8mb(this.selectedFile)){
+      this.alert.alert("error", "File size should be less than 8mb", "Error", { displayDuration: 2000, pos: 'top' })
+      this.selectedFile=null;
+    }
   }
 
 
@@ -109,8 +122,13 @@ export class ManageContentComponent {
   }
 
   onAboutUsFileSelected(event: any, index: any) {
-    const file = event.target.files[0];
-    this.selectedAboutUsFiles[`card_${index}_image_path`] = file;
+    let file = event.target.files[0];
+    if(this.isFileExceed8mb(file)){
+      this.alert.alert("error", "File size should be less than 8mb", "Error", { displayDuration: 2000, pos: 'top' })
+      file=null;
+    }else{
+      this.selectedAboutUsFiles[`card_${index}_image_path`] = file;
+    }
   }
 
   getAboutContentData(card: any, event: any) {
@@ -157,6 +175,10 @@ export class ManageContentComponent {
 
   chooseOurRoleImg(event: any) {
     this.selectedRoleImage = event.target.files[0];
+    if(this.isFileExceed8mb(this.selectedRoleImage)){
+      this.alert.alert("error", "File size should be less than 8mb", "Error", { displayDuration: 2000, pos: 'top' })
+      this.selectedRoleImage=null;
+    }
   }
 
   getRoleContentData(item: any, event: any) {
