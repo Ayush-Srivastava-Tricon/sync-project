@@ -9,37 +9,50 @@ import { SellerService } from 'src/app/service/seller.service';
 })
 export class SetRuleEngineComponent {
 
-  ruleConfig:any={};
-  showExcludingPartnerList:boolean=false;
-  countryList:any=[];
-  stateList:any=[];
-  cityList:any=[];
-  discountForm:FormGroup|any;
-  constructor(private sellerService:SellerService){}
+  ruleConfig: any = {};
+  showExcludingPartnerList: boolean = false;
+  countryList: any = [];
+  stateList: any = [];
+  cityList: any = [];
+  discountForm: FormGroup | any;
+  allruleenginedata: any;
+  constructor(private sellerService: SellerService) { }
 
-  ngOnInit(){
+  ngOnInit() {
     // this.fetchCountry();
+    this.fethchruleengineData();
   }
 
-  fetchCountry(){
-    this.sellerService.fetchCountry((data:any)=>{
+  fetchCountry() {
+    this.sellerService.fetchCountry((data: any) => {
       this.countryList = data.data;
       console.log(this.ruleConfig);
-      
-    })  
-  } 
 
-  getStates(event:any){
+    })
+  }
+
+  fethchruleengineData() {
+
+    this.sellerService.fetchruleEngineData((response: any) => {
+      this.allruleenginedata = response[0];
+      console.log(this.allruleenginedata);
+
+      // console.log(response);
+
+    })
+  }
+
+  getStates(event: any) {
 
   }
 
-  onChange(){
+  onChange() {
 
   }
 
-  submitValue(){
+  submitValue() {
 
   }
 
-  
+
 }

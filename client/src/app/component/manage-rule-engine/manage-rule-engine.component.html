@@ -8,55 +8,75 @@
                         <div class="mb-3">
                             <div class="form-check d-flex justify-content-between align-items-center">
                                 <label class="form-check-label" for="margin">Margin</label>
-                                <input class="form-check-input" type="checkbox" id="margin"  [(ngModel)]="ruleConfig.margin" (change)="onChange()">
+                                <input class="form-check-input" type="checkbox" id="margin"
+                                    [checked]="allruleenginedata?.margin ==  '1'" [(ngModel)]="ruleConfig.margin"
+                                    (change)="onChange()">
                             </div>
                         </div>
                         <div class="mb-3">
                             <div class="form-check d-flex justify-content-between align-items-center">
                                 <label class="form-check-label" for="territory">Territory</label>
-                                <input class="form-check-input" type="checkbox" id="territory" [(ngModel)]="ruleConfig.territory" (change)="onChange()">
+                                <input class="form-check-input" type="checkbox" id="territory"
+                                    [checked]="allruleenginedata?.territory ==  '1'" [(ngModel)]="ruleConfig.territory"
+                                    (change)="onChange()">
                             </div>
                         </div>
                         <div class="mb-3">
                             <div class="form-check d-flex justify-content-between align-items-center">
                                 <label class="form-check-label" for="sellingPeriod">Selling Period</label>
-                                <input class="form-check-input" type="checkbox" id="sellingPeriod" [(ngModel)]="ruleConfig.sellingPeriod" (change)="onChange()">
+                                <input class="form-check-input" type="checkbox" id="selling_period"
+                                    [checked]="allruleenginedata?.selling_period ==  '1'"
+                                    [(ngModel)]="ruleConfig.selling_period" (change)="onChange()">
                             </div>
                         </div>
                         <div class="mb-3">
                             <div class="form-check d-flex justify-content-between align-items-center">
                                 <label class="form-check-label" for="travelPeriod">Travel Period</label>
-                                <input class="form-check-input" type="checkbox" id="travelPeriod"  [(ngModel)]="ruleConfig.travelPeriod" (change)="onChange()">
+                                <input class="form-check-input" type="checkbox" id="travel_period"
+                                    [checked]="allruleenginedata?.travel_period ==  '1'"
+                                    [(ngModel)]="ruleConfig.travel_period" (change)="onChange()">
                             </div>
                         </div>
                         <div class="mb-3">
                             <div class="form-check d-flex justify-content-between align-items-center">
-                                <label class="form-check-label" for="excludingSellingPartner">Excluding Selling Partner</label>
-                                <input class="form-check-input" type="checkbox" id="excludingSellingPartner" [(ngModel)]="ruleConfig.excludingPartner" (change)="onChange()">
+                                <label class="form-check-label" for="excludingSellingPartner">Excluding Selling
+                                    Partner</label>
+                                <input class="form-check-input" type="checkbox" id="excluding_selling_partner"
+                                    [checked]="allruleenginedata?.excluding_selling_partner ==  '1'"
+                                    [(ngModel)]="ruleConfig.excluding_selling_partner" (change)="onChange()">
                             </div>
                         </div>
                         <div class="mb-3">
                             <div class="form-check d-flex justify-content-between align-items-center">
                                 <label class="form-check-label" for="cancellationPolicy">Cancellation Policy</label>
-                                <input class="form-check-input" type="checkbox" id="cancellationPolicy" [(ngModel)]="ruleConfig.cancellationPolicy" (change)="onChange()">
+                                <input class="form-check-input" type="checkbox" id="cancellation_policy"
+                                    [checked]="allruleenginedata?.cancellation_policy ==  '1'"
+                                    [(ngModel)]="ruleConfig.cancellation_policy" (change)="onChange()">
                             </div>
                         </div>
                         <div class="mb-3">
                             <div class="form-check d-flex justify-content-between align-items-center">
                                 <label class="form-check-label" for="paymentPolicy">Payment Policy</label>
-                                <input class="form-check-input" type="checkbox" id="paymentPolicy"  [(ngModel)]="ruleConfig.paymentPolicy" (change)="onChange()">
+                                <input class="form-check-input" type="checkbox" id="payment_policy"
+                                    [checked]="allruleenginedata?.payment_policy ==  '1'"
+                                    [(ngModel)]="ruleConfig.payment_policy" (change)="onChange()">
                             </div>
                         </div>
                         <div class="mb-3">
                             <div class="form-check d-flex justify-content-between align-items-center">
                                 <label class="form-check-label" for="hotelsContent">Hotels Content</label>
-                                <input class="form-check-input" type="checkbox" id="hotelsContent" [(ngModel)]="ruleConfig.hotelsContent" (change)="onChange()">
+                                <input class="form-check-input" type="checkbox" id="hotels_content"
+                                    [checked]="allruleenginedata?.hotels_content ==  '1'"
+                                    [(ngModel)]="ruleConfig.hotels_content" (change)="onChange()">
                             </div>
                         </div>
                         <div class="mb-4">
                             <div class="form-check d-flex justify-content-between align-items-center">
-                                <label class="form-check-label" for="hotelPartnerAllocation">Hotel/partner allocation</label>
-                                <input class="form-check-input" type="checkbox" id="hotelPartnerAllocation" [(ngModel)]="ruleConfig.hotelPartnerAllocation" (change)="onChange()">
+                                <label class="form-check-label" for="hotelPartnerAllocation">Hotel/partner
+                                    allocation</label>
+                                <input class="form-check-input" type="checkbox" id="hotel_partner_allocation"
+                                    [checked]="allruleenginedata?.hotel_partner_allocation ==  '1'"
+                                    [(ngModel)]="ruleConfig.hotel_partner_allocation" (change)="onChange()">
                             </div>
                         </div>
                         <hr>

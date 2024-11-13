@@ -1,102 +1,171 @@
 <div class="container-fluid mt-4">
     <div class="discount-form">
         <div class="row">
-            <div class="col-sm-6">
-                <div class="section">
-                    <h4>Margin</h4>
-                    <div class="form-group">
-                        <label for="name">Set margins per market</label>
-                        <select id="type">
-                            <option value="normal">Select Country</option>
-                        </select>
+            <!-- Margin Section: Use ng-container to conditionally show if margin is '1' -->
+            <ng-container *ngIf="allruleenginedata?.margin == '1'">
+                <div class="col-sm-6">
+                    <div class="section">
+                        <h4>Margin</h4>
+                        <div class="form-group">
+                            <label for="market">Set margins per market</label>
+                            <select id="market" class="form-control">
+                                <option value="normal">Select Country</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="destination">Set margins per destination</label>
+                            <select id="destination" class="form-control">
+                                <option value="normal">Select Country</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="type"> Set margins per destination</label>
-                        <select id="type">
-                            <option value="normal">Select Country</option>
-                        </select>
-                    </div>
-                    <h4>Territory</h4>
-                    <div class="form-group">
-                        <label for="name">Where can the deal be sold:</label>
-                        <select id="type">
-                            <option value="normal">Select Country</option>
-                        </select>
-                    </div>
+                </div>
+            </ng-container>
 
-                </div>
-            </div>
-            <div class="col-sm-6">
-                <div class="section">
-                    <h4>Selling period (standard all)</h4>
-                    <div class="form-group">
-                        <label>Start Date</label>
-                        <input type="date" placeholder="Leave empty field for all dates.">
-                    </div>
-                    <div class="form-group">
-                        <label>End Date</label>
-                        <input type="date" placeholder="Leave empty field for all dates.">
-                    </div>
-                    <h4>Travel period (standard all)</h4>
-                    <div class="form-group">
-                        <label>Start Date</label>
-                        <input type="date" placeholder="Leave empty field for all dates.">
-                    </div>
-                    <div class="form-group">
-                        <label>End Date</label>
-                        <input type="date" placeholder="Leave empty field for all dates.">
+            <!-- Territory Section: Use ng-container to conditionally show if territory is '1' -->
+            <ng-container *ngIf="allruleenginedata?.territory == '1'">
+                <div class="col-sm-6">
+                    <div class="section">
+                        <h4>Territory</h4>
+                        <div class="form-group">
+                            <label for="territory">Where can the deal be sold:</label>
+                            <select id="territory" class="form-control">
+                                <option value="normal">Select Country</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </ng-container>
         </div>
+
         <div class="row">
-            <div class="col-sm-6 mb-4">
-                <div class="section">
-                    <div class="form-section">
-                        <h4>Excluding Selling Partners</h4>
-                        <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" id="exclude_partners"
-                                (change)="showExcludingPartnerList = !showExcludingPartnerList">
-                            <label class="form-check-label" for="exclude_partners">
-                                Option to opt-out specific selling partners
-                            </label>
-                        </div>
-                        <div id="exclude_companies_section" *ngIf="showExcludingPartnerList">
-                            <label for="exclude_companies" class="form-label">Add Company name and websites to
-                                exclude:</label>
-                            <input type="text" class="form-control" id="exclude_companies" name="exclude_companies">
-                        </div>
-                        <h4>Policies</h4>
-                        <div class="mb-3">
-                            <label for="cancellation_policy" class="form-label">Cancellation policy:</label>
-                            <input type="text" class="form-control" id="cancellation_policy" name="cancellation_policy">
-                        </div>
-                        <div class="mb-3">
-                            <label for="payment_policy" class="form-label">Payment policy:</label>
-                            <input type="text" class="form-control" id="payment_policy" name="payment_policy">
-                        </div>
-                    </div>
-
-                </div>
-            </div>
+            <!-- Selling Period and Travel Period: Use ng-container to conditionally show if selling_period is '1' -->
             <div class="col-sm-6">
-                <div class="section my-4">
-                    <div class="form-section">
-                        <h4>Hotel Information</h4>
-                        <div class="mb-3">
-                            <label for="hotels_content" class="form-label">Hotels content:</label>
-                            <input type="text" class="form-control" id="hotels_content" name="hotels_content">
+                <div class="section">
+                    <!-- Selling Period Section: Show this section only if selling_period is '1' -->
+                    <ng-container *ngIf="allruleenginedata?.selling_period == '1'">
+                        <h4>Selling period (standard all)</h4>
+                        <div class="form-group">
+                            <label for="selling-start-date">Start Date</label>
+                            <input type="date" id="selling-start-date" class="form-control"
+                                placeholder="Leave empty field for all dates.">
                         </div>
-                        <div class="mb-3">
-                            <label for="hotel_allocation" class="form-label">Hotel/partner allocation:</label>
-                            <input type="text" class="form-control" id="hotel_allocation" name="hotel_allocation">
+                        <div class="form-group">
+                            <label for="selling-end-date">End Date</label>
+                            <input type="date" id="selling-end-date" class="form-control"
+                                placeholder="Leave empty field for all dates.">
                         </div>
-                    </div>
+                    </ng-container>
 
+                    <!-- Travel Period Section: Show this section only if travel_period is '1' -->
+                    <ng-container *ngIf="allruleenginedata?.travel_period == '1'">
+                        <h4>Travel period (standard all)</h4>
+                        <div class="form-group">
+                            <label for="travel-start-date">Start Date</label>
+                            <input type="date" id="travel-start-date" class="form-control"
+                                placeholder="Leave empty field for all dates.">
+                        </div>
+                        <div class="form-group">
+                            <label for="travel-end-date">End Date</label>
+                            <input type="date" id="travel-end-date" class="form-control"
+                                placeholder="Leave empty field for all dates.">
+                        </div>
+                    </ng-container>
                 </div>
             </div>
-        </div>
 
+
+            <!-- Excluding Selling Partners Section: Use ng-container to conditionally show if excluding_selling_partner is '1' -->
+            <ng-container *ngIf="allruleenginedata?.excluding_selling_partner == '1'">
+                <div class="col-sm-6 mb-4">
+                    <div class="section">
+                        <div class="form-section">
+                            <!-- Excluding Selling Partners -->
+                            <h4>Excluding Selling Partners</h4>
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="exclude_partners"
+                                    (change)="showExcludingPartnerList = !showExcludingPartnerList">
+                                <label class="form-check-label" for="exclude_partners">
+                                    Option to opt-out specific selling partners
+                                </label>
+                            </div>
+
+                            <!-- Show input field for excluding companies if the checkbox is checked -->
+                            <ng-container *ngIf="showExcludingPartnerList">
+                                <div id="exclude_companies_section">
+                                    <label for="exclude_companies" class="form-label">Add Company name and websites to
+                                        exclude:</label>
+                                    <input type="text" class="form-control" id="exclude_companies"
+                                        name="exclude_companies">
+                                </div>
+                            </ng-container>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+
+            <!-- Policies Section: Use ng-container to conditionally show if cancellation_policy and payment_policy are '1' -->
+            <ng-container
+                *ngIf="allruleenginedata?.cancellation_policy == '1' || allruleenginedata?.payment_policy == '1'">
+                <div class="col-sm-6 mb-4">
+                    <div class="section">
+                        <div class="form-section">
+                            <!-- Policies Section -->
+                            <h4>Policies</h4>
+
+                            <!-- Cancellation Policy Section: Show if cancellation_policy is '1' -->
+                            <ng-container *ngIf="allruleenginedata?.cancellation_policy == '1'">
+                                <div class="mb-3">
+                                    <label for="cancellation_policy" class="form-label">Cancellation policy:</label>
+                                    <input type="text" class="form-control" id="cancellation_policy"
+                                        name="cancellation_policy">
+                                </div>
+                            </ng-container>
+
+                            <!-- Payment Policy Section: Show if payment_policy is '1' -->
+                            <ng-container *ngIf="allruleenginedata?.payment_policy == '1'">
+                                <div class="mb-3">
+                                    <label for="payment_policy" class="form-label">Payment policy:</label>
+                                    <input type="text" class="form-control" id="payment_policy" name="payment_policy">
+                                </div>
+                            </ng-container>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+
+
+            <!-- Hotel Information and Allocation: Use ng-container to conditionally show if hotels_content is '1' -->
+            <ng-container
+                *ngIf="allruleenginedata?.hotels_content == '1' || allruleenginedata?.hotel_partner_allocation == '1'">
+                <div class="col-sm-6">
+                    <div class="section my-4">
+                        <div class="form-section">
+
+                            <!-- Hotel Content Section -->
+                            <h4>Hotel Information</h4>
+                            <ng-container *ngIf="allruleenginedata?.hotels_content == '1'">
+                                <div class="mb-3">
+                                    <label for="hotels_content" class="form-label">Hotels content:</label>
+                                    <input type="text" class="form-control" id="hotels_content" name="hotels_content">
+                                </div>
+                            </ng-container>
+
+                            <!-- Hotel Allocation Section -->
+                            <ng-container *ngIf="allruleenginedata?.hotel_partner_allocation == '1'">
+                                <div class="mb-3">
+                                    <label for="hotel_allocation" class="form-label">Hotel/partner allocation:</label>
+                                    <input type="text" class="form-control" id="hotel_allocation"
+                                        name="hotel_allocation">
+                                </div>
+                            </ng-container>
+
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+
+        </div>
 
     </div>
 </div>

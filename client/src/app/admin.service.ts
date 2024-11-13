@@ -57,50 +57,58 @@ export class AdminService extends BaseService {
   }
 
 
-  fetchCalendarDataByStartEndDate(params:any,callback:any){
-    this.postData(params,this.httpUrls['GET_CALENDAR_DATA'],callback)
+  fetchCalendarDataByStartEndDate(params: any, callback: any) {
+    this.postData(params, this.httpUrls['GET_CALENDAR_DATA'], callback)
   }
 
-  fetchAllCalendarData(callback:any){
-    this.getData({},this.httpUrls['GET_ALL_CALENDAR_DATA'],callback)
+  fetchAllCalendarData(callback: any) {
+    this.getData({}, this.httpUrls['GET_ALL_CALENDAR_DATA'], callback)
   }
 
-  checkAvailability(params:any,callback:any){
-    this.postData(params,this.httpUrls['CHECK_AVAILABLITY'],callback)
-    
+  checkAvailability(params: any, callback: any) {
+    this.postData(params, this.httpUrls['CHECK_AVAILABLITY'], callback)
+
   }
-  
-  getListOfReservation(callback:any){
+
+  getListOfReservation(callback: any) {
     this.getData({}, this.httpUrls['GET_RESERVATION_LIST'], callback);
   }
-  
-  fetchBookingLog(callback:any){
+
+  fetchBookingLog(callback: any) {
     this.getData({}, this.httpUrls['GET_BOOKING_LOG_LIST'], callback);
   }
-  
-  addUser(params:any,callback:any){
-    this.postData(params,this.httpUrls['ADD_USER'],callback)
-  }
-  
-  fetchUserList(callback:any){
-    this.getData({}, this.httpUrls['GET_USER_LIST'], callback);
-  }
-  
-  editUser(params:any,callback:any){
-    this.postData(params,this.httpUrls['EDIT_USER'],callback)
-  }
-  
-  deleteUser(params:any,callback:any){
-    this.postData(params,this.httpUrls['DELETE_USER'],callback)
+
+  addUser(params: any, callback: any) {
+    this.postData(params, this.httpUrls['ADD_USER'], callback)
   }
 
-  getSellerList(callback:any){
+  fetchUserList(callback: any) {
+    this.getData({}, this.httpUrls['GET_USER_LIST'], callback);
+  }
+
+  editUser(params: any, callback: any) {
+    this.postData(params, this.httpUrls['EDIT_USER'], callback)
+  }
+
+  deleteUser(params: any, callback: any) {
+    this.postData(params, this.httpUrls['DELETE_USER'], callback)
+  }
+
+  getSellerList(callback: any) {
     this.getData({}, this.httpUrls['fetchsellerlist'], callback);
 
   }
-  savesellerlist(params:any,callback:any){
-    this.postData(params,this.httpUrls['savesellerlist'],callback)
+  savesellerlist(params: any, callback: any) {
+    this.postData(params, this.httpUrls['savesellerlist'], callback)
 
+  }
+
+  fetchruleEngineData(callback: any) {
+    this.getData({}, this.httpUrls['fethchrule_engine'], callback);
+  }
+
+  setruleEngineData(params: any, callback: any) {
+    this.postData(params, this.httpUrls['setrule_engine'], callback)
   }
 
 
