@@ -3357,22 +3357,23 @@
 
 
   .hover-elements {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    background-color: lightgreen;
-    color: white;
-    padding: 10px;
-    border-radius: 5px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      background-color: lightgreen;
+      color: white;
+      padding: 10px;
+      border-radius: 5px;
   }
-  
+
   .choose-file-label {
-    display: block;
-    cursor: pointer;
+      display: block;
+      cursor: pointer;
   }
-  
+
   .choose-file-input {
-    display: none; /* Hide the actual input */
+      display: none;
+      /* Hide the actual input */
   }
