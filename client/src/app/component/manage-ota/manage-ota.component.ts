@@ -22,21 +22,21 @@ export class ManageOtaComponent {
   currentOtaId: any = 0;
   siteIcon: any = '';
   siteIconFile: any = '';
-  commissionValue:any;
+  commissionValue: any;
 
   siteIconPathBaseUrl: any = environment.baseurl;
 
-  constructor(private alert: AlertService, private fb: FormBuilder, private _adminService: AdminService,private router:Router) {
+  constructor(private alert: AlertService, private fb: FormBuilder, private _adminService: AdminService, private router: Router) {
     this.otaModal = this.fb.group(
       {
-        site_name: ['', Validators.required],
-        site_icon: ['',Validators.required],
+        site_name: ['', [Validators.required, Validators.pattern('^[A-Za-z \s]+$')]],
+        site_icon: ['', Validators.required],
         site_endpoint: ['', Validators.required],
-        site_user: ['', Validators.required],
+        site_user: ['', [Validators.required, Validators.pattern('^[A-Za-z0-9]+$')]],
         site_pass: ['', Validators.required],
         site_apiKey: ['', Validators.required],
         site_otherInfo: ['', Validators.required],
-        commission: ['', [Validators.required,Validators.max(100)]],
+        commission: ['', [Validators.required, Validators.max(100)]],
         commissionType: ['', [Validators.required]],
       }
     )
@@ -66,7 +66,7 @@ export class ManageOtaComponent {
     this.showModal.delete = false;
     this.isEditModal = false;
     this.siteIcon = '';
-    this.siteIconFile='';
+    this.siteIconFile = '';
     this.otaModal.reset();
   }
 
@@ -81,15 +81,15 @@ export class ManageOtaComponent {
     this.siteIconFile = item.site_icon;
     this.showModal.ota = true;
     this.currentOtaId = item.id;
-    this.selectCommissioType({target:{value:item.commissionType}});
+    this.selectCommissioType({ target: { value: item.commissionType } });
     console.log(item);
-    
+
   }
 
-  editOtaDetails(){
+  editOtaDetails() {
     this.loader = true;
     if (this.otaModal.status == "VALID") {
-      
+
       const formData = new FormData();
       formData.append('siteName', this.otaModal.get('site_name').value);
       formData.append('siteIcon', this.siteIconFile ? this.siteIconFile : this.otaModal.get('site_icon').value);
@@ -111,8 +111,8 @@ export class ManageOtaComponent {
           this.getOtaList();
         }
       })
-    } else{
-      this.alert.alert("trash","Fields cannot be empty","Error",{displayDuration:2000,top});
+    } else {
+      this.alert.alert("trash", "Fields cannot be empty", "Error", { displayDuration: 2000, top });
       this.loader = false;
     }
   }
@@ -132,14 +132,14 @@ export class ManageOtaComponent {
     this.siteIcon = URL.createObjectURL(file);
     this.siteIconFile = event.target.files[0];
     this.otaModal.controls['site_icon'].setValue(this.siteIconFile);
-    
+
   }
 
   addNewOtaDetails() {
     this.loader = true;
     console.log(this.otaModal.value);
     if (this.otaModal.status == "VALID") {
-      
+
       const formData = new FormData();
       formData.append('siteName', this.otaModal.get('site_name').value);
       formData.append('siteIcon', this.siteIconFile);
@@ -160,68 +160,68 @@ export class ManageOtaComponent {
           this.getOtaList();
         }
       })
-    } else{
-      this.alert.alert("trash","Fields cannot be empty","Error",{displayDuration:2000,top});
+    } else {
+      this.alert.alert("trash", "Please check the fields", "Error", { displayDuration: 2000, top });
       this.loader = false;
     }
   }
 
-  toggleDeleteModal(id:any){
+  toggleDeleteModal(id: any) {
     this.showModal.delete = true;
     this.currentOtaId = id;
   }
 
-  deleteOta(){
-    this.loader=true;
-    let params:any={
-      id:this.currentOtaId
+  deleteOta() {
+    this.loader = true;
+    let params: any = {
+      id: this.currentOtaId
     };
-    this._adminService.deleteOta(params,(res:any)=>{
-      if(res.status == 200){
+    this._adminService.deleteOta(params, (res: any) => {
+      if (res.status == 200) {
         this.alert.alert("success", res.message, "Success", { displayDuration: 2000, pos: 'top' });
-        this.loader=false;
-          this.closeModal();
-          this.getOtaList();
-      }else{
-          this.loader=false;
-          this.closeModal();
-          this.alert.alert("trash","Something went wrong","Error",{displayDuration:2000,top});
+        this.loader = false;
+        this.closeModal();
+        this.getOtaList();
+      } else {
+        this.loader = false;
+        this.closeModal();
+        this.alert.alert("trash", "Something went wrong", "Error", { displayDuration: 2000, top });
 
-        }
-      })
+      }
+    })
   }
 
-  copyApiKey(val:any){
-      const selBox = document.createElement('textarea');
-      selBox.style.position = 'fixed';
-      selBox.style.left = '0';
-      selBox.style.top = '0';
-      selBox.style.opacity = '0';
-      selBox.value = val;
-      document.body.appendChild(selBox);
-      selBox.focus();
-      selBox.select();
-      document.execCommand('copy');
-      document.body.removeChild(selBox);
-      this.alert.alert("success","API Key Copied","Success",{ displayDuration: 1000, pos: 'top' })
-    }
+  copyApiKey(val: any) {
+    const selBox = document.createElement('textarea');
+    selBox.style.position = 'fixed';
+    selBox.style.left = '0';
+    selBox.style.top = '0';
+    selBox.style.opacity = '0';
+    selBox.value = val;
+    document.body.appendChild(selBox);
+    selBox.focus();
+    selBox.select();
+    document.execCommand('copy');
+    document.body.removeChild(selBox);
+    this.alert.alert("success", "API Key Copied", "Success", { displayDuration: 1000, pos: 'top' })
+  }
 
-    viewProperty(item:any){
-      this.router.navigate(["view_property",item.id]);
-      let siteName:any = item.site_name.toLowerCase().split(" ").join("_");
-      localStorage.setItem("current_ota_detail",JSON.stringify({"site_name":siteName,"apikey":item.site_apiKey,"endPoint":item.site_endpoint,"theme_id":item.site_otherInfo,"ota_id":item.id,'site_unformat_name':item.site_name}));
-      
-    }
+  viewProperty(item: any) {
+    this.router.navigate(["view_property", item.id]);
+    let siteName: any = item.site_name.toLowerCase().split(" ").join("_");
+    localStorage.setItem("current_ota_detail", JSON.stringify({ "site_name": siteName, "apikey": item.site_apiKey, "endPoint": item.site_endpoint, "theme_id": item.site_otherInfo, "ota_id": item.id, 'site_unformat_name': item.site_name }));
 
-    selectCommissioType(event:any){
-      if(event.target.value == 'fixed'){
-        this.otaModal.controls['commission'].setValidators([Validators.required]);
-        this.otaModal.controls['commission'].updateValueAndValidity();
-      }else{
-        this.otaModal.controls['commission'].setValidators([Validators.required,Validators.max(100)]);
-        this.otaModal.controls['commission'].updateValueAndValidity();
-      }
+  }
+
+  selectCommissioType(event: any) {
+    if (event.target.value == 'fixed') {
+      this.otaModal.controls['commission'].setValidators([Validators.required]);
+      this.otaModal.controls['commission'].updateValueAndValidity();
+    } else {
+      this.otaModal.controls['commission'].setValidators([Validators.required, Validators.max(100)]);
+      this.otaModal.controls['commission'].updateValueAndValidity();
     }
+  }
 
 }
 

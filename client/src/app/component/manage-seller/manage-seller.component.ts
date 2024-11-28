@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
+import { Validators } from '@angular/forms';
 import { FormArray, FormBuilder } from '@angular/forms';
 import { AdminService } from 'src/app/admin.service';
 import { AlertService } from 'src/app/shared/alert.service';
+
 
 @Component({
   selector: 'app-manage-seller',
@@ -14,9 +16,9 @@ export class ManageSellerComponent {
   isEditModal: boolean = false;
   sellerList: any = [];
   loader: boolean = false;
-  constructor(private adminService: AdminService,private _fb: FormBuilder,private alert:AlertService) {
+  constructor(private adminService: AdminService, private _fb: FormBuilder, private alert: AlertService) {
     this.sellerForm = this._fb.group({
-      name: [],
+      name: ['', [Validators.required, Validators.pattern('^[A-Za-z \s]+$')]],
       user_name: [],
       password: [],
       website: [],
@@ -30,14 +32,14 @@ export class ManageSellerComponent {
 
   }
 
-  
-  get getterIpAddress(){
+
+  get getterIpAddress() {
     return this.sellerForm.get("ip_address") as FormArray
   }
 
 
-  dynamicAddIp(){
-    for(let i=0;i<3;i++){
+  dynamicAddIp() {
+    for (let i = 0; i < 3; i++) {
       this.getterIpAddress.push(this._fb.group({
         ip: []
       }))
@@ -66,16 +68,16 @@ export class ManageSellerComponent {
 
 
   createNewSeller() {
-    this.loader=true;
+    this.loader = true;
     this.adminService.savesellerlist(this.sellerForm.value, (res: any) => {
-      if(res.status == 200){
-        this.loader=false;
+      if (res.status == 200) {
+        this.loader = false;
         this.fetchSellerList();
-        this.showModal=false;
-        this.alert.alert("success",res.message,"Success",{displayDuration:2000, pos: 'top'});
-      }else{
-        this.loader=false;
-        this.alert.alert("trash",res.message,"Error",{displayDuration:2000, pos: 'top'});
+        this.showModal = false;
+        this.alert.alert("success", res.message, "Success", { displayDuration: 2000, pos: 'top' });
+      } else {
+        this.loader = false;
+        this.alert.alert("trash", res.message, "Error", { displayDuration: 2000, pos: 'top' });
       }
     })
 

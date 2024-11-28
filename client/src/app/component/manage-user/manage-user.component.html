@@ -41,7 +41,8 @@
                             <td>{{item.role}}</td>
                             <td>
                                 <div class="d-flex">
-                                    <button type="button" class="btn btn-primary btn-sm" (click)="editKeeperOpenModal(item)">
+                                    <button type="button" class="btn btn-primary btn-sm"
+                                        (click)="editKeeperOpenModal(item)">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                             fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
                                             <path
@@ -52,7 +53,8 @@
                                             </path>
                                         </svg>
                                     </button>
-                                    <button type="button" class="btn btn-danger btn-sm mx-2" (click)="deleteUserModal(item.id)">
+                                    <button type="button" class="btn btn-danger btn-sm mx-2"
+                                        (click)="deleteUserModal(item.id)">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                             fill="currentColor" class="bi bi-person-x-fill" viewBox="0 0 16 16">
                                             <path fill-rule="evenodd"
@@ -82,46 +84,68 @@
             </ol>
         </nav>
     </div>
-
     <div class="container p-3 shadow my-3">
-        <div class="form-group row ">
+        <div class="form-group row">
             <label class="col-sm-5 col-form-label" for="linenFrequency">Name <span class="text-danger">*</span></label>
             <div class="col-sm-7">
-                <input type="text" id="name" [(ngModel)]="userConfig.name">
+                <input type="text" id="name" name="name" class="form-control" [(ngModel)]="userConfig.name"
+                    #nameModel="ngModel" required [pattern]="'^[A-Za-z \s]+$'" />
+
+                <div *ngIf="nameModel.invalid && nameModel.dirty" class="text-danger">
+                    <small *ngIf="nameModel.errors?.['required']">This field is required.</small>
+                    <small *ngIf="nameModel.errors?.['pattern']">Only alphabet characters and spaces are
+                        allowed.</small>
+                </div>
             </div>
         </div>
-        <div class="form-group row ">
+
+        <div class="form-group row">
             <label class="col-sm-5 col-form-label" for="cleanStatus">Email <span class="text-danger">*</span></label>
             <div class="col-sm-7">
-                <input type="email" id="name" [disabled]="isEditModal" [(ngModel)]="userConfig.email"
-                    placeholder="someone@gmail.com">
+                <input type="email" id="email" name="email" class="form-control" [(ngModel)]="userConfig.email"
+                    #emailModel="ngModel" required [pattern]="'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'"
+                    [disabled]="isEditModal" placeholder="someone@gmail.com" />
+
+                <div *ngIf="emailModel.invalid && emailModel.dirty" class="text-danger">
+                    <small *ngIf="emailModel.errors?.['required']">This field is required.</small>
+                    <small *ngIf="emailModel.errors?.['pattern']">Please enter a valid email address (e.g.,
+                        someone<span>&#64;</span>example.com).</small>
+                </div>
             </div>
         </div>
-        <div class="form-group row ">
+
+        <div class="form-group row">
             <label class="col-sm-5 col-form-label" for="cleanStatus">Password <span class="text-danger">*</span></label>
             <div class="col-sm-7">
-                <input type="password" id="name" [(ngModel)]="userConfig.password" placeholder="ABCDEFG">
+                <input type="password" id="password" [(ngModel)]="userConfig.password" name="password" required
+                    placeholder="ABCDEFG" />
             </div>
         </div>
-        <div class="form-group row ">
+
+        <div class="form-group row">
             <label class="col-sm-5 col-form-label" for="cleanStatus">Role <span class="text-danger">*</span></label>
             <div class="col-sm-7">
-                <select class="form-select" [(ngModel)]="userConfig.role">
+                <select class="form-select" [(ngModel)]="userConfig.role" name="role" required>
                     <option value="" disabled>Select</option>
-                    <option value="user" >User</option>
-                    <option value="booking_engine" >Booking Engine</option>
+                    <option value="user">User</option>
+                    <option value="booking_engine">Booking Engine</option>
                 </select>
             </div>
         </div>
 
+        <!-- Submit Button -->
         <div class="form-buttons">
             <div class="d-flex align-items-center">
-                <button type="submit" class="btn btn-success" (click)="isEditModal ? editUser() : saveUser()"
-                    [disabled]="loader">{{isEditModal? 'Update':'Save'}}</button>
+                <button type="button" class="btn btn-success"
+                    [disabled]="!nameModel.valid || !emailModel.valid || loader"
+                    (click)="isEditModal ? editUser() : saveUser()">
+                    {{ isEditModal ? 'Update' : 'Save' }}
+                </button>
                 <div class="spinner-border text-primary mx-2" *ngIf="loader"></div>
             </div>
         </div>
     </div>
+
 </div>
 
 <!-- DELETE Modal -->
